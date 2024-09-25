@@ -1,0 +1,67 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME_PROD}
+      POSTGRES_USER: ${DB_USER_PROD}
+      POSTGRES_PASSWORD: ${DB_PASS_PROD}
+    networks:
+      - mynetwork
+
+  backend:
+    build: 
+      context: ./app/backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+    environment:
+      DB_HOST_PROD: ${DB_HOST_PROD}  
+      DB_PORT_PROD: ${DB_PORT_PROD}
+      DB_NAME_PROD: ${DB_NAME_PROD}
+      DB_USER_PROD: ${DB_USER_PROD}
+      DB_PASS_PROD: ${DB_PASS_PROD}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
+
+  frontend:
+    build: 
+      context: ./app/frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "8501:8501"
+    networks:
+      - mynetwork
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+
+volumes:
+  pgadmin_root_prefs:
+    driver: local
+  pgadmin_working_dir:
+    driver: local
+  postgresql_data:
+    driver: local
+  postgresql_bin:
+    driver: local

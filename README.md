@@ -8,6 +8,10 @@
 
 Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltada para startups, com foco em integração de dados de vendas a partir de APIs e CRMs, utilizando tecnologias modernas e acessíveis. O objetivo é criar uma solução escalável para ingestão, transformação e visualização de dados, garantindo que tanto engenheiros de dados quanto analistas possam colaborar eficientemente. A arquitetura proposta inclui a divisão do pipeline em múltiplas camadas (Raw, Bronze, Silver e Gold), integração com APIs, Kafka para streaming, Airbyte para ingestão de dados, Airflow para orquestração e DBT para transformação de dados. A plataforma colaborativa "Briefer" também é integrada, permitindo que analistas de dados acessem e utilizem os dados transformados de forma eficiente.
 
+<p align="center">
+<img src = "./img/arquitetura.png">
+</p>
+
 ### **Sequence Diagram**
 
 O diagrama abaixo ilustra a interação entre as principais camadas e componentes da arquitetura, desde a ingestão dos dados brutos até sua transformação e disponibilização para análise.
@@ -85,6 +89,10 @@ sequenceDiagram
 - **Descrição:** Briefer é uma plataforma colaborativa de dados que permite que equipes de analistas acessem, compartilhem e analisem dados de maneira colaborativa.
 - **Uso no Projeto:** Facilita o acesso e a exploração dos dados transformados pelos analistas, proporcionando um ambiente colaborativo para análise de dados.
 
+<p align="center">
+<img src = "./img/briefer.png">
+</p>
+
 ---
 
 ### **Estrutura do Projeto**
@@ -125,7 +133,24 @@ O pipeline de dados é dividido em quatro camadas principais para garantir a qua
 
 ### **Passos para Configuração e Execução**
 
-### **Passos para Configuração e Execução**
+## Instalação via docker
+Antes de rodar o Docker, crie um arquivo .env na raiz do projeto com os seguintes valores:
+
+```
+DB_HOST_PROD = postgres
+DB_PORT_PROD = 5432
+DB_NAME_PROD = mydatabase
+DB_USER_PROD = user
+DB_PASS_PROD = password
+PGADMIN_EMAIL = email_pgadmin
+PGADMIN_PASSWORD = password_pgadmin
+```
+
+Para iniciar a aplicação, execute:
+
+```bash
+docker-compose up -d --build
+```
 
 #### **1. Criar o Repositório**
 
