@@ -6,7 +6,7 @@
 
 ### **Introdução**
 
-Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltada para startups, com foco em integração de dados de vendas a partir de APIs e CRMs, utilizando tecnologias modernas e acessíveis. O objetivo é criar uma solução escalável para ingestão, transformação e visualização de dados, garantindo que tanto engenheiros de dados quanto analistas possam colaborar eficientemente. A arquitetura proposta inclui a divisão do pipeline em múltiplas camadas (Raw, Bronze, Silver e Gold), integração com APIs, Kafka para streaming, Airbyte para ingestão de dados, Airflow para orquestração e DBT para transformação de dados. A plataforma colaborativa "Briefer" também é integrada, permitindo que analistas de dados acessem e utilizem os dados transformados de forma eficiente.
+Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltada para startups, com foco em integração de dados de vendas a partir de APIs e CRMs, utilizando tecnologias modernas e acessíveis. O objetivo é criar uma solução escalável para ingestão, transformação e visualização de dados, garantindo que tanto engenheiros de dados quanto analistas possam colaborar eficientemente. A arquitetura proposta inclui a divisão do pipeline em múltiplas camadas (Bronze, Silver e Gold), integração com APIs, Kafka para streaming, Airbyte para ingestão de dados, Airflow para orquestração e DBT para transformação de dados. A plataforma colaborativa "Briefer" também é integrada, permitindo que analistas de dados acessem e utilizem os dados transformados de forma eficiente.
 
 <p align="center">
 <img src = "./img/arquitetura.png">
@@ -82,7 +82,7 @@ sequenceDiagram
 #### **DBT**
 
 - **Descrição:** DBT (Data Build Tool) é uma ferramenta de transformação de dados que permite a construção de modelos SQL e a aplicação de boas práticas de desenvolvimento de software ao ETL.
-- **Uso no Projeto:** Utilizado para transformar os dados das camadas Raw, Bronze e Silver, preparando-os para a camada Gold, onde estarão prontos para consumo pelos analistas.
+- **Uso no Projeto:** Utilizado para transformar os dados das camadas Bronze e Silver, preparando-os para a camada Gold, onde estarão prontos para consumo pelos analistas.
 
 #### **Briefer**
 
@@ -116,17 +116,14 @@ O projeto está dividido em módulos para organizar melhor o desenvolvimento e f
 #### **Divisão em Camadas**
 
 O pipeline de dados é dividido em quatro camadas principais para garantir a qualidade e integridade dos dados à medida que eles progridem no sistema:
-
-1. **Camada Raw:**
-   - Dados brutos, não processados, diretamente das fontes de dados (APIs e CRM).
-   
-2. **Camada Bronze:**
+ 
+1. **Camada Bronze:**
    - Dados validados e padronizados após a ingestão, prontos para serem processados.
 
-3. **Camada Silver:**
+2. **Camada Silver:**
    - Dados limpos e transformados com regras de negócio aplicadas.
 
-4. **Camada Gold:**
+3. **Camada Gold:**
    - Dados finais prontos para análise e visualização, acessíveis por ferramentas como o Briefer.
 
 ---
@@ -223,6 +220,6 @@ docker-compose up -d --build
 
 ### **Conclusão**
 
-Este projeto de arquitetura de pipeline de dados para startups oferece uma solução eficiente, escalável e de baixo custo para lidar com o processamento e análise de grandes volumes de dados de vendas. Com a utilização de ferramentas modernas como Airbyte, Kafka, Airflow, DBT e Briefer, o pipeline garante a ingestão, transformação e disponibilização dos dados em camadas organizadas (Raw, Bronze, Silver, Gold), permitindo uma análise colaborativa e em tempo real.
+Este projeto de arquitetura de pipeline de dados para startups oferece uma solução eficiente, escalável e de baixo custo para lidar com o processamento e análise de grandes volumes de dados de vendas. Com a utilização de ferramentas modernas como Airbyte, Kafka, Airflow, DBT e Briefer, o pipeline garante a ingestão, transformação e disponibilização dos dados em camadas organizadas (Bronze, Silver, Gold), permitindo uma análise colaborativa e em tempo real.
 
 Essa arquitetura modular e flexível facilita a adaptação e o crescimento conforme a demanda aumenta, tornando-se uma excelente escolha para startups que precisam otimizar seus processos de dados sem comprometer o orçamento.
