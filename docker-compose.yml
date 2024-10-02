@@ -1,13 +1,15 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:latest
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgresql_bin:/usr/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${DB_NAME_PROD}
       POSTGRES_USER: ${DB_USER_PROD}
       POSTGRES_PASSWORD: ${DB_PASS_PROD}
+    ports:
+      - "5432:5432"
     networks:
       - mynetwork
 
@@ -16,7 +18,7 @@ services:
       context: ./app/backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/app
+      - ./app/backend:/main
     environment:
       DB_HOST_PROD: ${DB_HOST_PROD}  
       DB_PORT_PROD: ${DB_PORT_PROD}
@@ -35,7 +37,7 @@ services:
       context: ./app/frontend
       dockerfile: Dockerfile
     volumes:
-      - ./frontend:/app
+      - ./app/frontend:/app
     ports:
       - "8501:8501"
     networks:
@@ -46,8 +48,14 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_LISTEN_PORT: 5050
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - postgresql_bin:/usr/lib/postgresql
+      - pgadmin_root_prefs:/root/.pgadmin
+      - pgadmin_working_dir:/var/lib/pgadmin
     ports:
-      - "5050:80"
+      - 5050:5050
     depends_on:
       - postgres
     networks:
@@ -55,6 +63,7 @@ services:
 
 networks:
   mynetwork:
+    driver: bridge
 
 volumes:
   pgadmin_root_prefs:

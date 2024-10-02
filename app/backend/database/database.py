@@ -13,8 +13,7 @@ DB_USER = os.getenv('DB_USER_PROD')
 DB_PASS = os.getenv('DB_PASS_PROD')
 
 # Criar a URL de conexão do banco de dados
-SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_PORT}/{DB_NAME}"
-#SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgres/mydatabase"
+SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@postgres:{DB_PORT}/{DB_NAME}"
 
 # Cria o motor do banco de dados, é o conecta com o banco
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
