@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
 import requests
-from datetime import datetime, time
+from datetime import datetime, time, date
 
 class Dashboard:
     def __init__(self):
@@ -239,6 +239,130 @@ class Dashboard:
 
     def employee(self):
         st.title("Gerenciamento de Funcionários")
+
+        # Adicionar Funcionário
+        with st.expander("Adicionar um Novo Funcionário"):
+            with st.form("new_employee"):
+                first_name = st.text_input("Nome")
+                last_name = st.text_input("Sobrenome")
+                email = st.text_input("Email")
+                phone_number = st.text_input("Número de Telefone")
+                hire_date = st.date_input("Data de Contratação")
+                department_id = st.number_input("ID do Departamento", min_value=1, step=1)
+                job_title = st.text_input("Cargo")
+                location = st.text_input("Localização")
+                birth_date = st.date_input("Data de Nascimento")
+                gender = st.selectbox("Gênero", ["Masculino", "Feminino", "Prefiro não dizer"])
+                nationality = st.text_input("Nacionalidade")
+                start_date = st.date_input("Data de Início")
+                salary = st.number_input("Salário", min_value=0.01, format="%.2f")
+                
+                submit_button = st.form_submit_button("Adicionar Funcionário")
+
+                if submit_button:
+                    response = requests.post(
+                        "http://backend:8000/employees/",
+                        json={
+                            "first_name": first_name,
+                            "last_name": last_name,
+                            "email": email,
+                            "phone_number": phone_number,
+                            "hire_date": hire_date.isoformat(),
+                            "department_id": department_id,
+                            "job_title": job_title,
+                            "location": location,
+                            "birth_date": birth_date.isoformat(),
+                            "gender": gender,
+                            "nationality": nationality,
+                            "start_date": start_date.isoformat(),
+                            "salary": salary
+                        },
+                    )
+                    self.show_response_message(response)
+
+        # Visualizar Funcionários
+        with st.expander("Visualizar Funcionários"):
+            if st.button("Exibir Todos os Funcionários"):
+                response = requests.get("http://backend:8000/employees/")
+                if response.status_code == 200:
+                    employees = response.json()
+                    df = pd.DataFrame(employees)
+                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                else:
+                    self.show_response_message(response)
+
+        # Obter Detalhes de um Funcionário
+        with st.expander("Obter Detalhes de um Funcionário"):
+            get_id = st.number_input("ID do Funcionário", min_value=1, format="%d")
+            if st.button("Buscar Funcionário"):
+                response = requests.get(f"http://backend:8000/employees/{get_id}")
+                if response.status_code == 200:
+                    employee = response.json()
+                    df = pd.DataFrame([employee])
+                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                else:
+                    self.show_response_message(response)
+
+        # Deletar Funcionário
+        with st.expander("Deletar Funcionário"):
+            delete_id = st.number_input("ID do Funcionário para Deletar", min_value=1, format="%d")
+            if st.button("Deletar Funcionário"):
+                response = requests.delete(f"http://backend:8000/employees/{delete_id}")
+                self.show_response_message(response)
+
+        # Atualizar Funcionário
+        with st.expander("Atualizar Funcionário"):
+            with st.form("update_employee"):
+                update_id = st.number_input("ID do Funcionário", min_value=1, format="%d")
+                new_first_name = st.text_input("Novo Nome")
+                new_last_name = st.text_input("Novo Sobrenome")
+                new_email = st.text_input("Novo Email")
+                new_phone_number = st.text_input("Novo Número de Telefone")
+                new_department_id = st.number_input("Novo ID do Departamento", min_value=1, step=1)
+                new_job_title = st.text_input("Novo Cargo")
+                new_location = st.text_input("Nova Localização")
+                new_gender = st.selectbox("Novo Gênero", ["Masculino", "Feminino", "Prefiro não dizer"])
+                new_nationality = st.text_input("Nova Nacionalidade")
+                new_start_date = st.date_input("Nova Data de Início")
+                new_salary = st.number_input("Novo Salário", min_value=0.01, format="%.2f")
+                new_termination_date = st.date_input("Nova Data de Término (opcional)")
+
+                update_button = st.form_submit_button("Atualizar Funcionário")
+
+                if update_button:
+                    update_data = {}
+                    if new_first_name:
+                        update_data["first_name"] = new_first_name
+                    if new_last_name:
+                        update_data["last_name"] = new_last_name
+                    if new_email:
+                        update_data["email"] = new_email
+                    if new_phone_number:
+                        update_data["phone_number"] = new_phone_number
+                    if new_department_id:
+                        update_data["department_id"] = new_department_id
+                    if new_job_title:
+                        update_data["job_title"] = new_job_title
+                    if new_location:
+                        update_data["location"] = new_location
+                    if new_gender:
+                        update_data["gender"] = new_gender
+                    if new_nationality:
+                        update_data["nationality"] = new_nationality
+                    if new_start_date:
+                        update_data["start_date"] = new_start_date.isoformat()
+                    if new_salary:
+                        update_data["salary"] = new_salary
+                    if new_termination_date:
+                        update_data["termination_date"] = new_termination_date.isoformat()
+
+                    if update_data:
+                        response = requests.put(
+                            f"http://backend:8000/employees/{update_id}", json=update_data
+                        )
+                        self.show_response_message(response)
+                    else:
+                        st.error("Nenhuma informação fornecida para atualização")
 
     def supplier(self):
         st.title("Gerenciamento de Fornecedores")
