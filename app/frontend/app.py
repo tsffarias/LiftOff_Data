@@ -245,21 +245,96 @@ class Dashboard:
     
     def sales(self):
         st.title("Gerenciamento de Vendas")
+        
+        # Adicionar Venda
+        with st.expander("Adicionar uma Nova Venda"):
+            with st.form("new_sale"):
+                email = st.text_input("Email do Vendedor")
+                data = st.date_input("Data da compra", datetime.now())
+                hora = st.time_input("Hora da compra", value=time(9, 0))
+                valor = st.number_input("Valor da venda", min_value=0.0, format="%.2f")
+                quantidade = st.number_input("Quantidade de produtos", min_value=1, step=1)
+                produto = st.selectbox("Produto", options=["ZapFlow com Gemini", "ZapFlow com chatGPT", "ZapFlow com Llama3.0"])
+                
+                submit_button = st.form_submit_button("Adicionar Venda")
 
-        email = st.text_input("Campo de texto para inserção do email do vendedor")
-        data = st.date_input("Data da compra", datetime.now())
-        hora = st.time_input("Hora da compra", value=time(9, 0))  # Valor padrão: 09:00
-        valor = st.number_input("Valor da venda", min_value=0.0, format="%.2f")
-        quantidade = st.number_input("Quantidade de produtos", min_value=1, step=1)
-        produto = st.selectbox("Produto", options=["ZapFlow com Gemini", "ZapFlow com chatGPT", "ZapFlow com Llama3.0"])
+                if submit_button:
+                    data_hora = datetime.combine(data, hora)
+                    response = requests.post(
+                        "http://backend:8000/sales/",
+                        json={
+                            "email": email,
+                            "data": data_hora.isoformat(),
+                            "valor": valor,
+                            "quantidade": quantidade,
+                            "produto": produto,
+                        },
+                    )
+                    self.show_response_message(response)
 
-        if st.button("Salvar"):
-            st.write(email)
-            st.write(data)
-            st.write(hora)
-            st.write(valor)
-            st.write(quantidade)
-            st.write(produto)
+        # Visualizar Vendas
+        with st.expander("Visualizar Vendas"):
+            if st.button("Exibir Todas as Vendas"):
+                response = requests.get("http://backend:8000/sales/")
+                if response.status_code == 200:
+                    sales = response.json()
+                    df = pd.DataFrame(sales)
+                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                else:
+                    self.show_response_message(response)
+
+        # Obter Detalhes de uma Venda
+        with st.expander("Obter Detalhes de uma Venda"):
+            get_id = st.number_input("ID da Venda", min_value=1, format="%d")
+            if st.button("Buscar Venda"):
+                response = requests.get(f"http://backend:8000/sales/{get_id}")
+                if response.status_code == 200:
+                    sale = response.json()
+                    df = pd.DataFrame([sale])
+                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                else:
+                    self.show_response_message(response)
+
+        # Deletar Venda
+        with st.expander("Deletar Venda"):
+            delete_id = st.number_input("ID da Venda para Deletar", min_value=1, format="%d")
+            if st.button("Deletar Venda"):
+                response = requests.delete(f"http://backend:8000/sales/{delete_id}")
+                self.show_response_message(response)
+
+        # Atualizar Venda
+        with st.expander("Atualizar Venda"):
+            with st.form("update_sale"):
+                update_id = st.number_input("ID da Venda", min_value=1, format="%d")
+                new_email = st.text_input("Novo Email do Vendedor")
+                new_data = st.date_input("Nova Data da compra")
+                new_hora = st.time_input("Nova Hora da compra")
+                new_valor = st.number_input("Novo Valor da venda", min_value=0.0, format="%.2f")
+                new_quantidade = st.number_input("Nova Quantidade de produtos", min_value=1, step=1)
+                new_produto = st.selectbox("Novo Produto", options=["ZapFlow com Gemini", "ZapFlow com chatGPT", "ZapFlow com Llama3.0"])
+
+                update_button = st.form_submit_button("Atualizar Venda")
+
+                if update_button:
+                    update_data = {}
+                    if new_email:
+                        update_data["email"] = new_email
+                    if new_data and new_hora:
+                        update_data["data"] = datetime.combine(new_data, new_hora).isoformat()
+                    if new_valor > 0:
+                        update_data["valor"] = new_valor
+                    if new_quantidade > 0:
+                        update_data["quantidade"] = new_quantidade
+                    if new_produto:
+                        update_data["produto"] = new_produto
+
+                    if update_data:
+                        response = requests.put(
+                            f"http://backend:8000/sales/{update_id}", json=update_data
+                        )
+                        self.show_response_message(response)
+                    else:
+                        st.error("Nenhuma informação fornecida para atualização")
     
     def about(self):
         st.title('Sobre o Projeto LiftOff Data')
