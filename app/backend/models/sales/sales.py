@@ -4,6 +4,19 @@ from database.database import Base
 
 
 class SalesModel(Base):
+    """
+    Modelo de dados para representar uma venda no banco de dados.
+
+    Atributos:
+        id (Integer): Identificador único da venda, chave primária.
+        email (String): Email do comprador.
+        valor (Float): Valor total da venda.
+        quantidade (Integer): Quantidade de itens vendidos.
+        produto (String): Nome ou identificador do produto vendido.
+        data (DateTime): Data e hora da venda.
+        created_at (DateTime): Data e hora de criação do registro da venda.
+    """
+
     __tablename__ = "sales"
 
     id = Column(Integer, primary_key=True, index=True)

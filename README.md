@@ -15,7 +15,6 @@ Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltad
 ### **Sequence Diagram**
 
 O diagrama abaixo ilustra a interação entre as principais camadas e componentes da arquitetura, desde a ingestão dos dados brutos até sua transformação e disponibilização para análise.
-
 ```mermaid
 sequenceDiagram
     participant U as Usuário
@@ -79,6 +78,9 @@ graph TD
 
 - **Descrição:** MkDocs é uma ferramenta estática de documentação em Python que permite a criação de sites de documentação de forma simples e estruturada. É especialmente útil para projetos que precisam de uma documentação clara e acessível para os desenvolvedores e usuários.
 - **Uso no Projeto:** MkDocs é utilizado para gerar a documentação do sistema, detalhando como o projeto foi estruturado, as funcionalidades desenvolvidas, e como o sistema deve ser mantido e atualizado.
+- **Configuração e Execução:**
+  1. Para visualizar a documentação localmente, execute: `mkdocs serve`
+  2. Acesse a documentação em: `http://127.0.0.1:8000/`
 
 #### **Airbyte**
 
@@ -239,3 +241,4 @@ docker-compose up -d --build
 Este projeto de arquitetura de pipeline de dados para startups oferece uma solução eficiente, escalável e de baixo custo para lidar com o processamento e análise de grandes volumes de dados de vendas. Com a utilização de ferramentas modernas como Airbyte, Kafka, Airflow, DBT e Briefer, o pipeline garante a ingestão, transformação e disponibilização dos dados em camadas organizadas (Bronze, Silver, Gold), permitindo uma análise colaborativa e em tempo real.
 
 Essa arquitetura modular e flexível facilita a adaptação e o crescimento conforme a demanda aumenta, tornando-se uma excelente escolha para startups que precisam otimizar seus processos de dados sem comprometer o orçamento.
+

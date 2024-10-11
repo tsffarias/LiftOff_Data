@@ -1,0 +1,9 @@
+site_name: LiftOff Docs
+
+theme:
+  name: "material"
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python

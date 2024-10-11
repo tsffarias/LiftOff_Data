@@ -4,6 +4,19 @@ from database.database import Base
 
 
 class ProductModel(Base):
+    """
+    Modelo de dados para representar um produto no banco de dados.
+
+    Atributos:
+        id (Integer): Identificador único do produto, chave primária.
+        name (String): Nome do produto.
+        description (String): Descrição do produto.
+        price (Float): Preço do produto.
+        categoria (String): Categoria do produto.
+        email_fornecedor (String): Email do fornecedor do produto.
+        created_at (DateTime): Data e hora de criação do registro do produto.
+    """
+
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
