@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 import pandas as pd
 import requests
-import pandas as pd
+from datetime import datetime, time
 
 class Dashboard:
     def __init__(self):
@@ -24,8 +24,8 @@ class Dashboard:
 
         #Options Menu
         with st.sidebar:
-            selected = option_menu('LiftOff', ["Home", 'Produto', 'Sobre'], 
-                icons=['house', 'search', 'info-circle'], menu_icon='intersect', default_index=0,
+            selected = option_menu('LiftOff', ["Home", 'Funcionário', 'Fornecedor', 'Produto', 'Vendas', 'Sobre'], 
+                icons=['house', 'search', 'search', 'search', 'info-circle'], menu_icon='intersect', default_index=0,
                 styles={
                         "container": {"background-color": "#fafafa"},
                         "nav-link": {"--hover-color": "#eee"},
@@ -36,8 +36,14 @@ class Dashboard:
         # Menu Lateral
         if selected=="Home":
             self.home()
+        elif selected=="Funcionário":
+            self.employee() 
+        elif selected=="Fornecedor":
+            self.supplier()     
         elif selected=="Produto":
             self.product()
+        elif selected=="Vendas":
+            self.sales()
         else:
             self.about() 
 
@@ -210,6 +216,30 @@ class Dashboard:
                     else:
                         st.error("Nenhuma informação fornecida para atualização")
 
+    def employee(self):
+        st.title("Gerenciamento de Funcionários")
+
+    def supplier(self):
+        st.title("Gerenciamento de Fornecedores")
+    
+    def sales(self):
+        st.title("Gerenciamento de Vendas")
+
+        email = st.text_input("Campo de texto para inserção do email do vendedor")
+        data = st.date_input("Data da compra", datetime.now())
+        hora = st.time_input("Hora da compra", value=time(9, 0))  # Valor padrão: 09:00
+        valor = st.number_input("Valor da venda", min_value=0.0, format="%.2f")
+        quantidade = st.number_input("Quantidade de produtos", min_value=1, step=1)
+        produto = st.selectbox("Produto", options=["ZapFlow com Gemini", "ZapFlow com chatGPT", "ZapFlow com Llama3.0"])
+
+        if st.button("Salvar"):
+            st.write(email)
+            st.write(data)
+            st.write(hora)
+            st.write(valor)
+            st.write(quantidade)
+            st.write(produto)
+    
     def about(self):
         
         st.title('Arquitetura do Projeto')

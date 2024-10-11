@@ -35,6 +35,22 @@ sequenceDiagram
     end
 ```
 
+O diagrama a seguir descreve o fluxo de dados desde a entrada do usuário no frontend até a validação dos dados e o salvamento no banco de dados, se aprovado.
+
+```mermaid
+graph TD
+    A[Usuário Digita no Frontend] --> B{Validação do Contrato de Dados}
+    
+    B -- Dados Válidos --> C[Salva no Banco de Dados]
+    B -- Dados Inválidos --> D[Erro de Validação Exibido]
+
+    A --> |Entrada de Dados| B
+    B --> |Validação pelo Pydantic| C
+    B --> |Falha na Validação| D
+    C --> E[Dados Salvos com Sucesso]
+    D --> F[Mostrar Mensagem de Erro no Frontend]
+```
+
 ---
 
 ### **Tecnologias Utilizadas**
