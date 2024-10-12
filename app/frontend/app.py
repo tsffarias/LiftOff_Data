@@ -366,7 +366,114 @@ class Dashboard:
 
     def supplier(self):
         st.title("Gerenciamento de Fornecedores")
-    
+
+        # Adicionar Fornecedor
+        with st.expander("Adicionar um Novo Fornecedor"):
+            with st.form("new_supplier"):
+                company_name = st.text_input("Nome da Empresa")
+                contact_name = st.text_input("Nome do Contato")
+                email = st.text_input("Email")
+                phone_number = st.text_input("Número de Telefone")
+                website = st.text_input("Website")
+                address = st.text_area("Endereço")
+                product_categories = st.selectbox(
+                    "Categorias de produtos ou serviços fornecidos",
+                    options=["Categoria 1", "Categoria 2", "Categoria 3"]
+                )
+                primary_product = st.text_input("Descrição do Produto ou Serviço contratado")
+                submit_button = st.form_submit_button("Adicionar Fornecedor")
+
+                if submit_button:
+                    response = requests.post(
+                        "http://backend:8000/suppliers/",
+                        json={
+                            "company_name": company_name,
+                            "contact_name": contact_name,
+                            "email": email,
+                            "phone_number": phone_number,
+                            "website": website,
+                            "address": address,
+                            "product_categories": product_categories,
+                            "primary_product": primary_product,
+                        },
+                    )
+                    self.show_response_message(response)
+
+        # Visualizar Fornecedores
+        with st.expander("Visualizar Fornecedores"):
+            if st.button("Exibir Todos os Fornecedores"):
+                response = requests.get("http://backend:8000/suppliers/")
+                if response.status_code == 200:
+                    suppliers = response.json()
+                    df = pd.DataFrame(suppliers)
+                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                else:
+                    self.show_response_message(response)
+
+        # Obter Detalhes de um Fornecedor
+        with st.expander("Obter Detalhes de um Fornecedor"):
+            get_id = st.number_input("ID do Fornecedor", min_value=1, format="%d")
+            if st.button("Buscar Fornecedor"):
+                response = requests.get(f"http://backend:8000/suppliers/{get_id}")
+                if response.status_code == 200:
+                    supplier = response.json()
+                    df = pd.DataFrame([supplier])
+                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                else:
+                    self.show_response_message(response)
+
+        # Deletar Fornecedor
+        with st.expander("Deletar Fornecedor"):
+            delete_id = st.number_input("ID do Fornecedor para Deletar", min_value=1, format="%d")
+            if st.button("Deletar Fornecedor"):
+                response = requests.delete(f"http://backend:8000/suppliers/{delete_id}")
+                self.show_response_message(response)
+
+        # Atualizar Fornecedor
+        with st.expander("Atualizar Fornecedor"):
+            with st.form("update_supplier"):
+                update_id = st.number_input("ID do Fornecedor", min_value=1, format="%d")
+                new_company_name = st.text_input("Novo Nome da Empresa")
+                new_contact_name = st.text_input("Novo Nome do Contato")
+                new_email = st.text_input("Novo Email")
+                new_phone_number = st.text_input("Novo Número de Telefone")
+                new_website = st.text_input("Novo Website")
+                new_address = st.text_area("Novo Endereço")
+                new_product_categories = st.selectbox(
+                    "Categorias de produtos ou serviços fornecidos",
+                    options=["Categoria 1", "Categoria 2", "Categoria 3"]
+                )
+                new_primary_product = st.text_input("Nova descrição do Produto ou Serviço contratado")
+
+                update_button = st.form_submit_button("Atualizar Fornecedor")
+
+                if update_button:
+                    update_data = {}
+                    if new_company_name:
+                        update_data["company_name"] = new_company_name
+                    if new_contact_name:
+                        update_data["contact_name"] = new_contact_name
+                    if new_email:
+                        update_data["email"] = new_email
+                    if new_phone_number:
+                        update_data["phone_number"] = new_phone_number
+                    if new_website:
+                        update_data["website"] = new_website
+                    if new_address:
+                        update_data["address"] = new_address
+                    if new_product_categories:
+                        update_data["product_categories"] = new_product_categories
+                    if new_primary_product:
+                        update_data["primary_product"] = new_primary_product
+
+                    if update_data:
+                        response = requests.put(
+                            f"http://backend:8000/suppliers/{update_id}", json=update_data
+                        )
+                        self.show_response_message(response)
+                    else:
+                        st.error("Nenhuma informação fornecida para atualização")
+
     def sales(self):
         st.title("Gerenciamento de Vendas")
         
@@ -501,10 +608,6 @@ class Dashboard:
 
         with col2:
             st.image("https://www.scrapehero.com/wp/wp-content/uploads/2019/05/api-gif.gif", use_column_width=True, caption="Integração de Dados em Ação")
-
-        
-        
-        
 
 if __name__ == "__main__":
     Dashboard()

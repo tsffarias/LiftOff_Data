@@ -4,27 +4,25 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 from enum import Enum
 
 class ProductCategoriesEnum(str, Enum):
-    produto1 = "Categoria 1"
-    produto2 = "Categoria 2"
-    produto3 = "Categoria 3"
+    categoria1 = "Categoria 1"
+    categoria2 = "Categoria 2"
+    categoria3 = "Categoria 3"
 
 class SupplierBase(BaseModel):
     """
     Modelo de dados para fornecedores.
 
     Args:
-        supplier_id (int): Identificador único do fornecedor (chave primária)
         company_name (str): Nome da empresa fornecedora
         contact_name (str): Nome do contato principal
         email (EmailStr): Endereço de email
         phone_number (str): Número de telefone
         website (str): Website da empresa
         address (str): Endereço completo
-        product_categories (List[ProdutoEnum]): Categorias dos produtos ou serviços fornecidos
+        product_categories (List[ProductCategoriesEnum]): Categorias dos produtos ou serviços fornecidos
         primary_product (str): Produto ou serviço principal
     """
     
-    supplier_id: int
     company_name: str
     contact_name: str
     email: EmailStr
@@ -45,7 +43,7 @@ class SupplierCreate(SupplierBase):
     pass
 
 class SupplierResponse(SupplierBase):
-    id: int
+    supplier_id: int
     created_at: datetime
 
     class Config:
@@ -65,6 +63,6 @@ class SupplierUpdate(BaseModel):
     def check_categoria(cls, v):
         if v is None:
             return v
-        if v in [item.value for item in ProductCategoriesEnum]:
+        if v in [item.value for item in ProductCategoriesEnum]: 
             return v
         raise ValueError("Categoria inválida")

@@ -18,6 +18,9 @@ def get_employees(db: Session):
 
 
 def create_employee(db: Session, employee: EmployeeCreate):
+    """
+    Função que cria um novo funcionário
+    """
     db_employee = EmployeeModel(**employee.model_dump())
     db.add(db_employee)
     db.commit()
@@ -26,6 +29,9 @@ def create_employee(db: Session, employee: EmployeeCreate):
 
 
 def delete_employee(db: Session, employee_id: int):
+    """
+    Função que deleta um funcionário
+    """
     db_employee = db.query(EmployeeModel).filter(EmployeeModel.employee_id == employee_id).first()
     db.delete(db_employee)
     db.commit()
@@ -33,6 +39,9 @@ def delete_employee(db: Session, employee_id: int):
 
 
 def update_employee(db: Session, employee_id: int, employee: EmployeeUpdate):
+    """
+    Função que atualiza um funcionário
+    """
     db_employee = db.query(EmployeeModel).filter(EmployeeModel.employee_id == employee_id).first()
 
     if db_employee is None:
