@@ -5,7 +5,7 @@ services:
       - postgresql_bin:/usr/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: ${DB_NAME_PROD}
+      POSTGRES_DB: ${DB_NAME_PROD} 
       POSTGRES_USER: ${DB_USER_PROD}
       POSTGRES_PASSWORD: ${DB_PASS_PROD}
     ports:
@@ -61,6 +61,20 @@ services:
     networks:
       - mynetwork
 
+  briefer:
+    image: briefercloud/briefer:latest
+    environment:
+      BRIEFER_DB_HOST: ${DB_HOST_PROD}
+      BRIEFER_DB_PORT: ${DB_PORT_PROD}
+      BRIEFER_DB_NAME: ${DB_NAME_PROD}
+      BRIEFER_DB_USER: ${DB_USER_PROD}
+      BRIEFER_DB_PASSWORD: ${DB_PASS_PROD}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
 networks:
   mynetwork:
     driver: bridge
