@@ -133,7 +133,7 @@ O projeto está dividido em módulos para organizar melhor o desenvolvimento e f
 
 #### **Divisão em Camadas**
 
-O pipeline de dados é dividido em quatro camadas principais para garantir a qualidade e integridade dos dados à medida que eles progridem no sistema:
+O pipeline de dados é dividido em três camadas principais para garantir a qualidade e integridade dos dados à medida que eles progridem no sistema:
  
 1. **Camada Bronze:**
    - Dados validados e padronizados após a ingestão, prontos para serem processados.
@@ -143,6 +143,41 @@ O pipeline de dados é dividido em quatro camadas principais para garantir a qua
 
 3. **Camada Gold:**
    - Dados finais prontos para análise e visualização, acessíveis por ferramentas como o Briefer.
+
+### Diagrama de Fluxo das Camadas Bronze, Silver e Gold no DBT
+
+Fluxo de transformação dos dados:
+
+```mermaid
+graph TD
+    A[Raw Data Source] -->|Extrai dados brutos| B[Bronze Layer]
+    B[Bronze Layer] -->|Limpeza de dados| C[Silver Layer]
+    C[Silver Layer] -->|Agregação e cálculos| D[Gold Layer - Vendas por Produto]
+    C[Silver Layer] -->|Agregação e cálculos| E[Gold Layer - Vendas por Vendedor]
+    
+    subgraph Bronze
+        B1[bronze_vendas.sql]
+    end
+    
+    subgraph Silver
+        S1[silver_vendas.sql]
+    end
+    
+    subgraph Gold
+        G1[gold_vendas_7_dias.sql]
+        G2[gold_vendas_por_vendedor.sql]
+    end
+```
+
+### Explicação do Diagrama
+
+- **Bronze Layer:** Esta camada recebe os dados brutos diretamente das fontes, criando uma visualização inicial sem transformações significativas.
+  
+- **Silver Layer:** Nesta etapa, os dados são limpos, ajustando datas inválidas e removendo outliers. É a fase em que os dados começam a ser preparados para análise.
+
+- **Gold Layer:** 
+  - **Gold Vendas por Produto:** Agrega e calcula os dados para apresentar o desempenho dos produtos nos últimos 7 dias.
+  - **Gold Vendas por Vendedor:** Apresenta o desempenho dos vendedores, também focando nos últimos 7 dias.
 
 ---
 

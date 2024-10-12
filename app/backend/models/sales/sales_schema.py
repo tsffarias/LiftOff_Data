@@ -28,7 +28,7 @@ class SalesBase(BaseModel):
     quantidade: PositiveInt
     produto: ProdutoEnum
 
-    @field_validator("produto")
+    @field_validator("produto", mode="before")
     @classmethod
     def check_categoria(cls, v):
         if v in [item.value for item in ProdutoEnum]:
