@@ -131,22 +131,9 @@ O projeto está dividido em módulos para organizar melhor o desenvolvimento e f
    - Gerencia a conexão e as operações com o banco de dados PostgreSQL utilizando Psycopg2.
    - Facilita a interação com o banco sem a necessidade de escrever SQL diretamente.
 
-#### **Divisão em Camadas**
-
-O pipeline de dados é dividido em três camadas principais para garantir a qualidade e integridade dos dados à medida que eles progridem no sistema:
- 
-1. **Camada Bronze:**
-   - Dados validados e padronizados após a ingestão, prontos para serem processados.
-
-2. **Camada Silver:**
-   - Dados limpos e transformados com regras de negócio aplicadas.
-
-3. **Camada Gold:**
-   - Dados finais prontos para análise e visualização, acessíveis por ferramentas como o Briefer.
-
 ### Diagrama de Fluxo das Camadas Bronze, Silver e Gold no DBT
 
-Fluxo de transformação dos dados:
+O pipeline de dados é dividido em três camadas principais para garantir a qualidade e integridade dos dados à medida que eles progridem no sistema:
 
 ```mermaid
 graph TD
@@ -175,7 +162,7 @@ graph TD
   
 - **Silver Layer:** Nesta etapa, os dados são limpos, ajustando datas inválidas e removendo outliers. É a fase em que os dados começam a ser preparados para análise.
 
-- **Gold Layer:** 
+- **Gold Layer:** Dados finais prontos para análise e visualização, acessíveis por ferramentas como o Briefer.
   - **Gold Vendas por Produto:** Agrega e calcula os dados para apresentar o desempenho dos produtos nos últimos 7 dias.
   - **Gold Vendas por Vendedor:** Apresenta o desempenho dos vendedores, também focando nos últimos 7 dias.
 
