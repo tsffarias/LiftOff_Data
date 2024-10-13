@@ -39,6 +39,7 @@ class EmployeeBase(BaseModel):
     phone_number: str
     hire_date: date
     department_id: int
+    manager_id: int
     job_title: str
     location: str
     birth_date: date

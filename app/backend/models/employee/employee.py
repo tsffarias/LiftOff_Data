@@ -30,7 +30,7 @@ class EmployeeModel(Base):
     __tablename__ = "employees"
 
     employee_id = Column(Integer, primary_key=True, index=True)
-    manager_id = Column(Integer, nullable=True)
+    manager_id = Column(Integer, index=True)
     first_name = Column(String, index=True)
     last_name = Column(String, index=True)
     email = Column(String, unique=True, index=True)

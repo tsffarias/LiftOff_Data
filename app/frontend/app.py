@@ -160,7 +160,7 @@ class Dashboard:
                     ]
 
                     # Exibe o DataFrame sem o índice
-                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                    st.dataframe(df, hide_index=True, width=None)
                 else:
                     self.show_response_message(response)
 
@@ -186,7 +186,7 @@ class Dashboard:
                     ]
 
                     # Exibe o DataFrame sem o índice
-                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                    st.dataframe(df, hide_index=True, width=None)
                 else:
                     self.show_response_message(response)
 
@@ -249,6 +249,7 @@ class Dashboard:
                 phone_number = st.text_input("Número de Telefone")
                 hire_date = st.date_input("Data de Contratação")
                 department_id = st.number_input("ID do Departamento", min_value=1, step=1)
+                manager_id = st.number_input("ID do Gerente", min_value=1, step=1)
                 job_title = st.text_input("Cargo")
                 location = st.text_input("Localização")
                 birth_date = st.date_input("Data de Nascimento")
@@ -269,6 +270,7 @@ class Dashboard:
                             "phone_number": phone_number,
                             "hire_date": hire_date.isoformat(),
                             "department_id": department_id,
+                            "manager_id": manager_id,
                             "job_title": job_title,
                             "location": location,
                             "birth_date": birth_date.isoformat(),
@@ -287,7 +289,7 @@ class Dashboard:
                 if response.status_code == 200:
                     employees = response.json()
                     df = pd.DataFrame(employees)
-                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                    st.dataframe(df, hide_index=True, width=None)
                 else:
                     self.show_response_message(response)
 
@@ -357,6 +359,7 @@ class Dashboard:
                 new_email = st.text_input("Novo Email")
                 new_phone_number = st.text_input("Novo Número de Telefone")
                 new_department_id = st.number_input("Novo ID do Departamento", min_value=1, step=1)
+                new_manager_id = st.number_input("Novo ID do Gerente", min_value=1, step=1)
                 new_job_title = st.text_input("Novo Cargo")
                 new_location = st.text_input("Nova Localização")
                 new_gender = st.selectbox("Novo Gênero", ["Masculino", "Feminino", "Prefiro não dizer"])
@@ -379,6 +382,8 @@ class Dashboard:
                         update_data["phone_number"] = new_phone_number
                     if new_department_id:
                         update_data["department_id"] = new_department_id
+                    if new_manager_id:
+                        update_data["manager_id"] = new_manager_id
                     if new_job_title:
                         update_data["job_title"] = new_job_title
                     if new_location:
@@ -444,7 +449,7 @@ class Dashboard:
                 if response.status_code == 200:
                     suppliers = response.json()
                     df = pd.DataFrame(suppliers)
-                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                    st.dataframe(df, hide_index=True, width=None)
                 else:
                     self.show_response_message(response)
 
@@ -456,7 +461,7 @@ class Dashboard:
                 if response.status_code == 200:
                     supplier = response.json()
                     df = pd.DataFrame([supplier])
-                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                    st.dataframe(df, hide_index=True, width=None)
                 else:
                     self.show_response_message(response)
 
@@ -548,7 +553,7 @@ class Dashboard:
                 if response.status_code == 200:
                     sales = response.json()
                     df = pd.DataFrame(sales)
-                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                    st.dataframe(df, hide_index=True, width=None)
                 else:
                     self.show_response_message(response)
 
@@ -560,7 +565,7 @@ class Dashboard:
                 if response.status_code == 200:
                     sale = response.json()
                     df = pd.DataFrame([sale])
-                    st.write(df.to_html(index=False), unsafe_allow_html=True)
+                    st.dataframe(df, hide_index=True, width=None)
                 else:
                     self.show_response_message(response)
 

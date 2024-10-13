@@ -60,7 +60,7 @@ def read_sales_route(sales_id: int, db: Session = Depends(get_db)):
     """
     db_sales = get_sales_by_id(db, sales_id=sales_id)
     if db_sales is None:
-        raise HTTPException(status_code=404, detail="Sales not found")
+        raise HTTPException(status_code=404, detail="Venda não encontrada")
     return db_sales
 
 
@@ -81,7 +81,7 @@ def detele_sales_route(sales_id: int, db: Session = Depends(get_db)):
     """
     db_sales = delete_sales(db, sales_id=sales_id)
     if db_sales is None:
-        raise HTTPException(status_code=404, detail="Sales not found")
+        raise HTTPException(status_code=404, detail="Venda não encontrada")
     return db_sales
 
 
@@ -105,5 +105,5 @@ def update_sales_route(
     """
     db_sales = update_sales(db, sales_id=sales_id, sales=sales)
     if db_sales is None:
-        raise HTTPException(status_code=404, detail="Sales not found")
+        raise HTTPException(status_code=404, detail="Venda não encontrada")
     return db_sales
