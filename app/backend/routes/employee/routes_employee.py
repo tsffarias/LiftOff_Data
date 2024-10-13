@@ -24,8 +24,14 @@ def create_employee_route(employee: EmployeeCreate, db: Session = Depends(get_db
 
     Retorna:
     - EmployeeResponse: Dados do funcionário criado.
+
+    Lança:
+    - HTTPException: Se houver um problema ao criar o funcionário.
     """
-    return create_employee(db=db, employee=employee)
+    try:
+        return create_employee(db=db, employee=employee)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao criar funcionário: {str(e)}")
 
 
 @router.get("/employees/", response_model=List[EmployeeResponse])
@@ -38,8 +44,13 @@ def read_all_employees_route(db: Session = Depends(get_db)):
 
     Retorna:
     - List[EmployeeResponse]: Lista de todos os funcionários.
+
+    Lança:
+    - HTTPException: Se não houver funcionários no banco de dados.
     """
     employees = get_employees(db)
+    if not employees:
+        raise HTTPException(status_code=404, detail="Não há dados no banco de dados")
     return employees
 
 
@@ -60,7 +71,7 @@ def read_employee_route(employee_id: int, db: Session = Depends(get_db)):
     """
     db_employee = get_employee(db, employee_id=employee_id)
     if db_employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
     return db_employee
 
 
@@ -81,7 +92,7 @@ def delete_employee_route(employee_id: int, db: Session = Depends(get_db)):
     """
     db_employee = delete_employee(db, employee_id=employee_id)
     if db_employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
     return db_employee
 
 
@@ -105,5 +116,5 @@ def update_employee_route(
     """
     db_employee = update_employee(db, employee_id=employee_id, employee=employee)
     if db_employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        raise HTTPException(status_code=404, detail="Funcionário não encontrado")
     return db_employee
