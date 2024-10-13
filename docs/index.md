@@ -1,6 +1,6 @@
 # Bem-vindo ao LiftOff Docs
 
-O LiftOff é um projeto inovador que visa simplificar e otimizar o processo de vendas e gerenciamento de produtos. Nossa plataforma oferece uma solução completa para empresas que buscam eficiência e escalabilidade em suas operações.
+O LiftOff é um projeto que visa simplificar e otimizar o processo de vendas e gerenciamento de produtos. Nossa plataforma oferece uma solução completa para empresas que buscam eficiência e escalabilidade em suas operações.
 
 ## Visão Geral do Projeto
 
@@ -34,5 +34,7 @@ Para uma visão detalhada dos modelos de dados e schemas utilizados no LiftOff, 
 
 - [Schemas de Produto](api/product_schema.md)
 - [Schemas de Vendas](api/sales_schema.md)
+- [Schemas de Funcionário](api/employee_schema.md)
+- [Schemas de Fornecedor](api/supplier_schema.md)
 
 Estas páginas contêm informações detalhadas sobre as estruturas de dados utilizadas em nossa API.
