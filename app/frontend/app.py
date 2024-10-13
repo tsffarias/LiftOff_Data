@@ -632,7 +632,7 @@ class Dashboard:
         7. Plataforma 'Briefer' para acesso e utilização dos dados transformados
         """)
 
-        st.image("https://raw.githubusercontent.com/tsffarias/LiftOff_Data/refs/heads/main/img/arquitetura.png", use_column_width=True, caption="Arquitetura do Pipeline de Dados")
+        st.image("https://raw.githubusercontent.com/tsffarias/LiftOff_Data/refs/heads/main/img/arquitetura_1.1.png", use_column_width=True, caption="Arquitetura do Pipeline de Dados")
 
         st.divider()
 
