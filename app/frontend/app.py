@@ -455,15 +455,48 @@ class Dashboard:
 
         # Obter Detalhes de um Fornecedor
         with st.expander("Obter Detalhes de um Fornecedor"):
-            get_id = st.number_input("ID do Fornecedor", min_value=1, format="%d")
-            if st.button("Buscar Fornecedor"):
-                response = requests.get(f"http://backend:8000/suppliers/{get_id}")
-                if response.status_code == 200:
-                    supplier = response.json()
-                    df = pd.DataFrame([supplier])
-                    st.dataframe(df, hide_index=True, width=None)
+            options = ["Selecione uma opção:", "ID", "Nome Empresa", "Nome Produto"]
+            select_search = st.selectbox("Buscar por:", options=options)
+
+            # Determina o estado do campo de entrada de texto
+            input_disabled = select_search == "Selecione uma opção:"
+
+            # Determina a mensagem do text_input
+            if input_disabled == True:
+                mensagem = "Selecione uma opção de pesquisa"
+            else:
+                mensagem = f"Pesquisar Fornecedor por {select_search}:"
+
+            # Entrada de texto para pesquisa
+            search_field = st.text_input(mensagem, disabled=input_disabled)
+
+            search_supplier_bt = st.button("Buscar fornecedor" , disabled=input_disabled)
+
+            if search_supplier_bt:
+                # Filtrando o DataFrame com base na entrada do usuário
+                if search_field.strip() == "":
+                    st.warning("Digite uma valor para ser pesquisado!")
                 else:
-                    self.show_response_message(response)
+                    if not input_disabled and search_field:
+                        response = requests.get(f"http://backend:8000/suppliers/")
+
+                        if response.status_code == 200:
+                            supplier = response.json()
+                            df = pd.DataFrame(supplier)
+                            
+                            if select_search == "Nome Empresa":
+                                df_supplier = df[df['company_name'].str.contains(search_field, case=False, na=False)]
+                            elif select_search == "Nome Produto":
+                                df_supplier = df[df['primary_product'].str.contains(search_field, case=False, na=False)]
+                            else:  # Assuming 'ID'
+                                df_supplier = df[df['supplier_id'].astype(str).str.contains(search_field, case=False, na=False)]
+                                
+                            if not df_supplier.empty:
+                                st.dataframe(df_supplier, hide_index=True, width=None)
+                            else:
+                                st.warning("Nenhum Fornecedor encontrado!")
+                        else:
+                            self.show_response_message(response)
 
         # Deletar Fornecedor
         with st.expander("Deletar Fornecedor"):
