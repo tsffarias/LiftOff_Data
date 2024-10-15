@@ -19,7 +19,7 @@
 Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltada para startups, com foco em integração de dados de vendas a partir de APIs e CRMs, utilizando tecnologias modernas e acessíveis. O objetivo é criar uma solução escalável para ingestão, transformação e visualização de dados, garantindo que tanto engenheiros de dados quanto analistas possam colaborar eficientemente. A arquitetura proposta inclui a divisão do pipeline em múltiplas camadas (Bronze, Silver e Gold), integração com APIs, Kafka para streaming, Airbyte para ingestão de dados, Airflow para orquestração e DBT para transformação de dados. A plataforma colaborativa "Briefer" também é integrada, permitindo que analistas de dados acessem e utilizem os dados transformados de forma eficiente.
 
 <p align="center">
-<img src = "./img/arquitetura_1.1.png">
+<img src = "./img/arquitetura_1.2.png">
 </p>
 
 ### **Sequence Diagram**
@@ -95,6 +95,10 @@ graph TD
 <p align="center">
   <img src = "./img/mkdocs.png">
 </p>
+
+#### **MinIO**
+- **Descrição:** MinIO é uma solução de armazenamento de objetos de código aberto compatível com o protocolo Amazon S3, ideal para o armazenamento escalável de grandes volumes de dados. Ele permite o uso local de serviços de armazenamento distribuído para dados não estruturados, como arquivos, logs e objetos de dados.
+- **Uso no Projeto:** No contexto deste projeto, MinIO é utilizado para armazenar dados brutos de produtos, funcionarios e fornecedores, por exempo: imagens, documentos em pdf. Ele serve como a camada de armazenamento persistente dos dados nas fases de ingestão e transformação.
 
 #### **Airbyte**
 

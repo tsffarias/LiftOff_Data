@@ -75,6 +75,22 @@ services:
       - postgres
     networks:
       - mynetwork
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - mynetwork
+      
 networks:
   mynetwork:
     driver: bridge
@@ -87,4 +103,6 @@ volumes:
   postgresql_data:
     driver: local
   postgresql_bin:
+    driver: local
+  minio_data:
     driver: local
