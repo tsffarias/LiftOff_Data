@@ -141,7 +141,7 @@ O projeto está dividido em módulos para organizar melhor o desenvolvimento e f
    - Responsável pela interface do usuário onde os dados de vendas são inseridos e exibidos.
    - Desenvolvido com Streamlit para proporcionar uma interação simples e amigável.
 
-2. **Contrato (`contrato.py`):**
+2. **Contrato (`<model_name>_schema.py.py`):**
    - Define as regras de validação dos dados utilizando Pydantic.
    - Assegura que os dados inseridos no frontend estão no formato correto e cumprem as regras estabelecidas pelo sistema.
 

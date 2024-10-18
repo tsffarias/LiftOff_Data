@@ -108,5 +108,7 @@ class EmployeeUpdate(BaseModel):
     gender: Optional[GenderEnum] = None
     nationality: Optional[str] = None
     start_date: Optional[date] = None
+    hire_date: Optional[date] = None
     salary: Optional[PositiveFloat] = None
     termination_date: Optional[date] = None
+    birth_date: Optional[date] = None
