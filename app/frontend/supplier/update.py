@@ -13,8 +13,8 @@ def update():
 
     update_id = str(st.number_input("Digite o id do Fornecedor:", min_value=1, format="%d"))
 
-    # Botão para consultar cliente
-    search_update_supplier_bt = st.button("Buscar Funcionário", key="search_supplier_update_button")
+    # Botão para consultar fornecedor
+    search_update_supplier_bt = st.button("Buscar Fornecedor", key="search_supplier_update_button")
 
     if search_update_supplier_bt:
         df = pd.DataFrame()
