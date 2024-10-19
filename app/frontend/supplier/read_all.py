@@ -9,4 +9,11 @@ from utils import show_response_message
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def read_all():
-    pass
+    if st.button("Exibir Todos os Fornecedores"):
+        response = requests.get("http://backend:8000/suppliers/")
+        if response.status_code == 200:
+            suppliers = response.json()
+            df = pd.DataFrame(suppliers)
+            st.dataframe(df, hide_index=True, width=None)
+        else:
+            show_response_message(response)

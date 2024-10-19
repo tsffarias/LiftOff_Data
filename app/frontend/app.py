@@ -149,185 +149,24 @@ class Dashboard:
 
         # Adicionar Fornecedor
         with st.expander("Adicionar um Novo Fornecedor"):
-            with st.form("new_supplier"):
-                company_name = st.text_input("Nome da Empresa")
-                contact_name = st.text_input("Nome do Contato")
-                email = st.text_input("Email")
-                phone_number = st.text_input("Número de Telefone")
-                website = st.text_input("Website")
-                address = st.text_area("Endereço")
-                product_categories = st.selectbox(
-                    "Categorias de produtos ou serviços fornecidos",
-                    options=["Categoria 1", "Categoria 2", "Categoria 3"]
-                )
-                primary_product = st.text_input("Descrição do Produto ou Serviço contratado")
-                submit_button = st.form_submit_button("Adicionar Fornecedor")
-
-                if submit_button:
-                    response = requests.post(
-                        "http://backend:8000/suppliers/",
-                        json={
-                            "company_name": company_name,
-                            "contact_name": contact_name,
-                            "email": email,
-                            "phone_number": phone_number,
-                            "website": website,
-                            "address": address,
-                            "product_categories": product_categories,
-                            "primary_product": primary_product,
-                        },
-                    )
-                    show_response_message(response)
+            create_supplier()
 
         # Visualizar Fornecedores
         with st.expander("Visualizar Fornecedores"):
-            if st.button("Exibir Todos os Fornecedores"):
-                response = requests.get("http://backend:8000/suppliers/")
-                if response.status_code == 200:
-                    suppliers = response.json()
-                    df = pd.DataFrame(suppliers)
-                    st.dataframe(df, hide_index=True, width=None)
-                else:
-                    show_response_message(response)
+            read_all_supplier()
 
         # Obter Detalhes de um Fornecedor
         with st.expander("Obter Detalhes de um Fornecedor"):
-            options = ["Selecione uma opção:", "ID", "Nome Empresa", "Nome Produto"]
-            select_search = st.selectbox("Buscar por:", options=options)
-
-            # Determina o estado do campo de entrada de texto
-            input_disabled = select_search == "Selecione uma opção:"
-
-            # Determina a mensagem do text_input
-            if input_disabled == True:
-                mensagem = "Selecione uma opção de pesquisa"
-            else:
-                mensagem = f"Pesquisar Fornecedor por {select_search}:"
-
-            # Entrada de texto para pesquisa
-            search_field = st.text_input(mensagem, disabled=input_disabled)
-
-            search_supplier_bt = st.button("Buscar fornecedor" , disabled=input_disabled)
-
-            if search_supplier_bt:
-                # Filtrando o DataFrame com base na entrada do usuário
-                if search_field.strip() == "":
-                    st.warning("Digite uma valor para ser pesquisado!")
-                else:
-                    if not input_disabled and search_field:
-                        response = requests.get(f"http://backend:8000/suppliers/")
-
-                        if response.status_code == 200:
-                            supplier = response.json()
-                            df = pd.DataFrame(supplier)
-                            
-                            if select_search == "Nome Empresa":
-                                df_supplier = df[df['company_name'].str.contains(search_field, case=False, na=False)]
-                            elif select_search == "Nome Produto":
-                                df_supplier = df[df['primary_product'].str.contains(search_field, case=False, na=False)]
-                            else:  # Assuming 'ID'
-                                df_supplier = df[df['supplier_id'].astype(str).str.contains(search_field, case=False, na=False)]
-                                
-                            if not df_supplier.empty:
-                                st.dataframe(df_supplier, hide_index=True, width=None)
-                            else:
-                                st.warning("Nenhum Fornecedor encontrado!")
-                        else:
-                            show_response_message(response)
+            read_supplier()
 
         # Deletar Fornecedor
         with st.expander("Deletar Fornecedor"):
-            delete_id = st.number_input("ID do Fornecedor para Deletar", min_value=1, format="%d")
-            
-            # Botão para consultar Fornecedor
-            if st.button("Buscar Fornecedor"):
-                response = requests.get(f"http://backend:8000/suppliers/{delete_id}")
-                if response.status_code == 200:
-                    suppliers = response.json()
-                    df = pd.DataFrame([suppliers])
-            
-                    # Seleciona as colunas desejadas
-                    df = df[
-                        [
-                            "supplier_id",
-                            "company_name",
-                            "contact_name",
-                            "primary_product",
-                            "email",
-                            "phone_number"
-                        ]
-                    ]
-
-                    # Salvando o funcionário encontrado no estado da sessão
-                    st.session_state['df_suppliers_del'] = df
-                    st.session_state['id_suppliers_del'] = delete_id
-                else:
-                    st.warning("Fornecedor não encontrado!")
-                    st.session_state.pop('df_suppliers_del', None)
-            
-            # Exibe as informações do Fornecedor, se encontrado
-            if 'df_suppliers_del' in st.session_state:    
-                st.text_input("Nome da Empresa:", value=st.session_state["df_suppliers_del"].at[0, "company_name"], disabled=True, key="input_company_name")
-                st.text_input("Nome de Contato:", value=st.session_state["df_suppliers_del"].at[0, "contact_name"], disabled=True, key="input_contact_name")
-                st.text_input("Produto:", value=st.session_state["df_suppliers_del"].at[0, "primary_product"], disabled=True, key="input_primary_product")
-                st.text_input("E-mail:", value=st.session_state["df_suppliers_del"].at[0, "email"], disabled=True, key="input_email")
-                st.text_input("Telefone:", value=st.session_state["df_suppliers_del"].at[0, "phone_number"], disabled=True, key="input_phone")     
-
-                # Botão para deletar funcionário
-                if st.button("Deletar Fornecedor"):
-                    response = requests.delete(f"http://backend:8000/suppliers/{st.session_state['id_suppliers_del']}")
-                    if response.status_code == 200:
-                        st.success("Fornecedor deletado com sucesso!")
-                        st.session_state.pop('df_suppliers_del')
-                        st.session_state.pop('id_suppliers_del')
-                    else:
-                        st.error("Erro ao deletar o Fornecedor!")
+            delete_supplier()
 
 
         # Atualizar Fornecedor
         with st.expander("Atualizar Fornecedor"):
-            with st.form("update_supplier"):
-                update_id = st.number_input("ID do Fornecedor", min_value=1, format="%d")
-                new_company_name = st.text_input("Novo Nome da Empresa")
-                new_contact_name = st.text_input("Novo Nome do Contato")
-                new_email = st.text_input("Novo Email")
-                new_phone_number = st.text_input("Novo Número de Telefone")
-                new_website = st.text_input("Novo Website")
-                new_address = st.text_area("Novo Endereço")
-                new_product_categories = st.selectbox(
-                    "Categorias de produtos ou serviços fornecidos",
-                    options=["Categoria 1", "Categoria 2", "Categoria 3"]
-                )
-                new_primary_product = st.text_input("Nova descrição do Produto ou Serviço contratado")
-
-                update_button = st.form_submit_button("Atualizar Fornecedor")
-
-                if update_button:
-                    update_data = {}
-                    if new_company_name:
-                        update_data["company_name"] = new_company_name
-                    if new_contact_name:
-                        update_data["contact_name"] = new_contact_name
-                    if new_email:
-                        update_data["email"] = new_email
-                    if new_phone_number:
-                        update_data["phone_number"] = new_phone_number
-                    if new_website:
-                        update_data["website"] = new_website
-                    if new_address:
-                        update_data["address"] = new_address
-                    if new_product_categories:
-                        update_data["product_categories"] = new_product_categories
-                    if new_primary_product:
-                        update_data["primary_product"] = new_primary_product
-
-                    if update_data:
-                        response = requests.put(
-                            f"http://backend:8000/suppliers/{update_id}", json=update_data
-                        )
-                        show_response_message(response)
-                    else:
-                        st.error("Nenhuma informação fornecida para atualização")
+            update_supplier()
 
     def sales(self):
         st.title("Gerenciamento de Vendas")
