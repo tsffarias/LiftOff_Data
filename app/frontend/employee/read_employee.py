@@ -12,7 +12,6 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def read_employee():
 
-    with st.expander("Obter Detalhes de um Funcionário"):
                 options = ["Selecione uma opção:", "ID", "Nome", "Sobrenome", "Email", "Telefone"]
                 select_search = st.selectbox("Buscar por:", options=options)
 

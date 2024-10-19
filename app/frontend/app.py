@@ -291,20 +291,27 @@ class Dashboard:
                         st.error("Nenhuma informação fornecida para atualização")
 
     def employee(self): 
+        st.title("Gerenciamento de Funcionários")
+        
         # Criar funcionário
-        create_employee()
+        with st.expander("Adicionar Novo Funcionário"):
+            create_employee()
 
         # Visualizar Funcionários
-        read_all_employee()
+        with st.expander("Visualizar Funcionários"):
+            read_all_employee()
 
         # Obter Detalhes de um Funcionário
-        read_employee()
+        with st.expander("Obter Detalhes de um Funcionário"):
+            read_employee()
 
         # Deletar Funcionário
-        delete_employee()
+        with st.expander("Deletar Funcionário"):
+            delete_employee()
         
         # Atualizar Funcionário
-        update_employee()
+        with st.expander("Atualizar Funcionário"):
+            update_employee()
 
     def supplier(self):
         st.title("Gerenciamento de Fornecedores")

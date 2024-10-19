@@ -11,7 +11,7 @@ from utils import show_response_message
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def read_all():
-    with st.expander("Visualizar Funcionários"):
+    
         if st.button("Exibir Todos os Funcionários"):
             response = requests.get("http://backend:8000/employees/")
             if response.status_code == 200:

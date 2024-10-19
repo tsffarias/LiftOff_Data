@@ -11,10 +11,7 @@ from utils import show_response_message
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def create():
-    st.title("Gerenciamento de Funcionários")
-
     # Adicionar Funcionário
-    with st.expander("Adicionar um Novo Funcionário"):
         with st.form("new_employee"):
             first_name = st.text_input("Nome")
             last_name = st.text_input("Sobrenome")

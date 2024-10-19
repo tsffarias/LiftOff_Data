@@ -9,8 +9,6 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def update():
 
-    with st.expander("Atualizar Funcionário"):
-
                 update_id = str(st.number_input("Digite o id do Funcionário:",min_value=1, format="%d"))
 
                 # Botão para consultar cliente

@@ -9,7 +9,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def delete():
 
-    with st.expander("Deletar Funcionário"):
+    
 
                 delete_id = st.number_input("Pesquisar funcionário por ID:", min_value=1, format="%d")
 
