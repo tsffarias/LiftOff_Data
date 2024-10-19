@@ -104,191 +104,22 @@ class Dashboard:
         
         # Adicionar Produto
         with st.expander("Adicionar um Novo Produto"):
-            with st.form("new_product"):
-                name = st.text_input("Nome do Produto")
-                description = st.text_area("Descrição do Produto")
-                price = st.number_input("Preço", min_value=0.01, format="%f")
-                categoria = st.selectbox(
-                    "Categoria",
-                    ["Eletrônico", "Eletrodoméstico", "Móveis", "Roupas", "Calçados"],
-                )
-                email_fornecedor = st.text_input("Email do Fornecedor")
-                submit_button = st.form_submit_button("Adicionar Produto")
-
-                if submit_button:
-                    response = requests.post(
-                        "http://backend:8000/products/",
-                        json={
-                            "name": name,
-                            "description": description,
-                            "price": price,
-                            "categoria": categoria,
-                            "email_fornecedor": email_fornecedor,
-                        },
-                    )
-                    show_response_message(response)
+            create_product()
         # Visualizar Produtos
         with st.expander("Visualizar Produtos"):
-            if st.button("Exibir Todos os Produtos"):
-                response = requests.get("http://backend:8000/products/")
-                if response.status_code == 200:
-                    product = response.json()
-                    df = pd.DataFrame(product)
-
-                    df = df[
-                        [
-                            "id",
-                            "name",
-                            "description",
-                            "price",
-                            "categoria",
-                            "email_fornecedor",
-                            "created_at",
-                        ]
-                    ]
-
-                    # Exibe o DataFrame sem o índice
-                    st.dataframe(df, hide_index=True, width=None)
-                else:
-                    show_response_message(response)
+            read_all_product()
 
         # Obter Detalhes de um Produto
         with st.expander("Obter Detalhes de um Produto"):
+            read_product()
             
-            options = ["Selecione uma opção:", "ID", "Nome", "Descrição", "Email Fornecedor"]
-            select_search = st.selectbox("Buscar por:", options=options)
-
-            # Determina o estado do campo de entrada de texto
-            input_disabled = select_search == "Selecione uma opção:"
-
-            # Determina a mensagem do text_input
-            if input_disabled == True:
-                mensagem = "Selecione uma opção de pesquisa"
-            else:
-                mensagem = f"Pesquisar Produto por {select_search}:"
-
-            # Entrada de texto para pesquisa
-            search_field = st.text_input(mensagem, disabled=input_disabled)
-
-            search_supplier_bt = st.button("Buscar produto" , disabled=input_disabled)
-
-            if search_supplier_bt:
-                # Filtrando o DataFrame com base na entrada do usuário
-                if search_field.strip() == "":
-                    st.warning("Digite uma valor para ser pesquisado!")
-                else:
-                    if not input_disabled and search_field:
-                        response = requests.get(f"http://backend:8000/products/")
-
-                        if response.status_code == 200:
-                            product = response.json()
-                            df = pd.DataFrame(product)
-                            
-                            if select_search == "Nome":
-                                df_product = df[df['name'].str.contains(search_field, case=False, na=False)]
-                            elif select_search == "Descrição":
-                                df_product = df[df['description'].str.contains(search_field, case=False, na=False)]
-                            elif select_search == "Email Fornecedor":
-                                df_product = df[df['email_fornecedor'].str.contains(search_field, case=False, na=False)]
-                            else:  # Assuming 'ID'
-                                df_product = df[df['id'].astype(str).str.contains(search_field, case=False, na=False)]
-                                
-                            if not df_product.empty:
-                                st.dataframe(df_product, hide_index=True, width=None)
-                            else:
-                                st.warning("Nenhum Produto encontrado!")
-                        else:
-                            show_response_message(response)
-
         # Deletar Produto
         with st.expander("Deletar Produto"):
-            delete_id = st.number_input("ID do Produto para Deletar", min_value=1, format="%d")
-            
-            # Botão para consultar Produto
-            if st.button("Buscar Produto"):
-                response = requests.get(f"http://backend:8000/products/{delete_id}")
-                if response.status_code == 200:
-                    product = response.json()
-                    df = pd.DataFrame([product])
+            delete_product()
 
-                    # Seleciona as colunas desejadas
-                    df = df[
-                        [
-                            "id",
-                            "name",
-                            "description",
-                            "categoria",
-                            "email_fornecedor",
-                            "price"
-                        ]
-                    ]
-
-                    # Salvando o funcionário encontrado no estado da sessão
-                    st.session_state['df_product_del'] = df
-                    st.session_state['id_product_del'] = delete_id
-                else:
-                    st.warning("Produto não encontrado!")
-                    st.session_state.pop('df_product_del', None)
-            
-            # Exibe as informações do Produto, se encontrado
-            if 'df_product_del' in st.session_state:    
-                st.text_input("Nome:", value=st.session_state["df_product_del"].at[0, "name"], disabled=True, key="input_name")
-                st.text_input("Descrição:", value=st.session_state["df_product_del"].at[0, "description"], disabled=True, key="input_description")
-                st.text_input("Categoria:", value=st.session_state["df_product_del"].at[0, "categoria"], disabled=True, key="input_categoria")
-                st.text_input("Preço:", value=st.session_state["df_product_del"].at[0, "price"], disabled=True, key="input_price")     
-                st.text_input("E-mail Fornecedor:", value=st.session_state["df_product_del"].at[0, "email_fornecedor"], disabled=True, key="input_email_fornecedor")
-                
-
-                # Botão para deletar Produto
-                if st.button("Deletar Produto"):
-                    response = requests.delete(f"http://backend:8000/products/{st.session_state['id_product_del']}")
-                    if response.status_code == 200:
-                        st.success("Produto deletado com sucesso!")
-                        st.session_state.pop('df_product_del')
-                        st.session_state.pop('id_product_del')
-                    else:
-                        st.error("Erro ao deletar o Produto!")
-
-            
         # Atualizar Produto
         with st.expander("Atualizar Produto"):
-            with st.form("update_product"):
-                update_id = st.number_input("ID do Produto", min_value=1, format="%d")
-                new_name = st.text_input("Novo Nome do Produto")
-                new_description = st.text_area("Nova Descrição do Produto")
-                new_price = st.number_input(
-                    "Novo Preço",
-                    min_value=0.01,
-                    format="%f",
-                )
-                new_categoria = st.selectbox(
-                    "Nova Categoria",
-                    ["Eletrônico", "Eletrodoméstico", "Móveis", "Roupas", "Calçados"],
-                )
-                new_email = st.text_input("Novo Email do Fornecedor")
-
-                update_button = st.form_submit_button("Atualizar Produto")
-
-                if update_button:
-                    update_data = {}
-                    if new_name:
-                        update_data["name"] = new_name
-                    if new_description:
-                        update_data["description"] = new_description
-                    if new_price > 0:
-                        update_data["price"] = new_price
-                    if new_email:
-                        update_data["email_fornecedor"] = new_email
-                    if new_categoria:
-                        update_data["categoria"] = new_categoria
-
-                    if update_data:
-                        response = requests.put(
-                            f"http://backend:8000/products/{update_id}", json=update_data
-                        )
-                        show_response_message(response)
-                    else:
-                        st.error("Nenhuma informação fornecida para atualização")
+            update_product()
 
     def employee(self): 
         st.title("Gerenciamento de Funcionários")

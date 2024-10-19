@@ -4,8 +4,30 @@ import requests
 from datetime import datetime, time, date
 import os
 from dotenv import load_dotenv
+from utils import show_response_message
 # Carrega o arquivo .env usando um caminho relativo
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def read_all():
-    pass
+    if st.button("Exibir Todos os Produtos"):
+                response = requests.get("http://backend:8000/products/")
+                if response.status_code == 200:
+                    product = response.json()
+                    df = pd.DataFrame(product)
+
+                    df = df[
+                        [
+                            "id",
+                            "name",
+                            "description",
+                            "price",
+                            "categoria",
+                            "email_fornecedor",
+                            "created_at",
+                        ]
+                    ]
+
+                    # Exibe o DataFrame sem o índice
+                    st.dataframe(df, hide_index=True, width=None)
+                else:
+                    show_response_message(response)
