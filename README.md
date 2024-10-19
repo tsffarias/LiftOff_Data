@@ -79,10 +79,10 @@ graph TD
 - **Descrição:** Psycopg2 é uma biblioteca que permite a interação com bancos de dados PostgreSQL diretamente através de Python, facilitando a execução de comandos SQL e o gerenciamento das conexões.
 - **Uso no Projeto:** Utilizado para conectar a aplicação ao banco de dados PostgreSQL, executar comandos SQL, e salvar os dados validados.
 
-#### **SQLAlchemy (Opcional)**
+#### **SQLAlchemy**
 
 - **Descrição:** SQLAlchemy é uma poderosa biblioteca de SQL toolkit e ORM (Object-Relational Mapping) para Python. Ele permite a interação com bancos de dados relacionais de forma mais intuitiva, utilizando objetos Python em vez de comandos SQL diretamente.
-- **Uso no Projeto:** SQLAlchemy poderia ser utilizado para gerenciar a conexão com o banco de dados PostgreSQL e facilitar as operações de CRUD (opcional, não implementado no exemplo atual).
+- **Uso no Projeto:** SQLAlchemy foi utilizado para gerenciar a conexão com o banco de dados PostgreSQL e facilitar as operações de CRUD.
 
 #### **MkDocs**
 
