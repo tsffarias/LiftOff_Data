@@ -173,132 +173,23 @@ class Dashboard:
         
         # Adicionar Venda
         with st.expander("Adicionar uma Nova Venda"):
-            with st.form("new_sale"):
-                email = st.text_input("Email do Vendedor")
-                data = st.date_input("Data da compra", datetime.now())
-                hora = st.time_input("Hora da compra", value=time(9, 0))
-                valor = st.number_input("Valor da venda", min_value=0.0, format="%.2f")
-                quantidade = st.number_input("Quantidade de produtos", min_value=1, step=1)
-                produto = st.selectbox("Produto", options=["ZapFlow com Gemini", "ZapFlow com chatGPT", "ZapFlow com Llama3.0"])
-                
-                submit_button = st.form_submit_button("Adicionar Venda")
-
-                if submit_button:
-                    data_hora = datetime.combine(data, hora)
-                    response = requests.post(
-                        "http://backend:8000/sales/",
-                        json={
-                            "email": email,
-                            "data": data_hora.isoformat(),
-                            "valor": valor,
-                            "quantidade": quantidade,
-                            "produto": produto,
-                        },
-                    )
-                    show_response_message(response)
+            create_sale()
 
         # Visualizar Vendas
         with st.expander("Visualizar Vendas"):
-            if st.button("Exibir Todas as Vendas"):
-                response = requests.get("http://backend:8000/sales/")
-                if response.status_code == 200:
-                    sales = response.json()
-                    df = pd.DataFrame(sales)
-                    st.dataframe(df, hide_index=True, width=None)
-                else:
-                    show_response_message(response)
+            read_all_sales()
 
         # Obter Detalhes de uma Venda
         with st.expander("Obter Detalhes de uma Venda"):
-            options = ["Selecione uma opção:", "ID", "Email", "Produto", "Data"]
-            select_search = st.selectbox("Buscar por:", options=options)
-
-            # Determina o estado do campo de entrada de texto
-            input_disabled = select_search == "Selecione uma opção:"
-
-            # Determina a mensagem do text_input
-            if input_disabled == True:
-                mensagem = "Selecione uma opção de pesquisa"
-            else:
-                mensagem = f"Pesquisar Venda por {select_search}:"
-
-            if select_search == 'Data':
-                search_field = st.date_input("Selecione a Data da Venda", datetime.now())
-            else:
-                # Entrada de texto para pesquisa
-                search_field = st.text_input(mensagem, disabled=input_disabled)
-
-            search_supplier_bt = st.button("Buscar venda" , disabled=input_disabled)
-
-            if search_supplier_bt:
-                # Filtrando o DataFrame com base na entrada do usuário
-                if isinstance(search_field, str) and search_field.strip() == "":
-                    st.warning("Digite um valor para ser pesquisado!")
-                else:
-                    if not input_disabled and search_field:
-                        response = requests.get(f"http://backend:8000/sales/")
-
-                        if response.status_code == 200:
-                            sales = response.json()
-                            df = pd.DataFrame(sales)
-                            
-                            if select_search == "Email":
-                                df_sales = df[df['email'].str.contains(search_field, case=False, na=False)]
-                            elif select_search == "Produto":
-                                df_sales = df[df['produto'].str.contains(search_field, case=False, na=False)]
-                            elif select_search == "Data":
-                                search_field_str = search_field.strftime('%Y-%m-%d')
-                                df_sales = df[df['data'].str.contains(search_field_str, case=False, na=False)]
-                            else:  # Assuming 'ID'
-                                df_sales = df[df['id'].astype(str).str.contains(search_field, case=False, na=False)]
-                                
-                            if not df_sales.empty:
-                                st.dataframe(df_sales, hide_index=True, width=None)
-                            else:
-                                st.warning("Nenhuma Venda encontrada!")
-                        else:
-                            show_response_message(response)
+            read_sale()
 
         # Deletar Venda
         with st.expander("Deletar Venda"):
-            delete_id = st.number_input("ID da Venda para Deletar", min_value=1, format="%d")
-            if st.button("Deletar Venda"):
-                response = requests.delete(f"http://backend:8000/sales/{delete_id}")
-                show_response_message(response)
+            delete_sale()
 
         # Atualizar Venda
         with st.expander("Atualizar Venda"):
-            with st.form("update_sale"):
-                update_id = st.number_input("ID da Venda", min_value=1, format="%d")
-                new_email = st.text_input("Novo Email do Vendedor")
-                new_data = st.date_input("Nova Data da compra")
-                new_hora = st.time_input("Nova Hora da compra")
-                new_valor = st.number_input("Novo Valor da venda", min_value=0.0, format="%.2f")
-                new_quantidade = st.number_input("Nova Quantidade de produtos", min_value=1, step=1)
-                new_produto = st.selectbox("Novo Produto", options=["ZapFlow com Gemini", "ZapFlow com chatGPT", "ZapFlow com Llama3.0"])
-
-                update_button = st.form_submit_button("Atualizar Venda")
-
-                if update_button:
-                    update_data = {}
-                    if new_email:
-                        update_data["email"] = new_email
-                    if new_data and new_hora:
-                        update_data["data"] = datetime.combine(new_data, new_hora).isoformat()
-                    if new_valor > 0:
-                        update_data["valor"] = new_valor
-                    if new_quantidade > 0:
-                        update_data["quantidade"] = new_quantidade
-                    if new_produto:
-                        update_data["produto"] = new_produto
-
-                    if update_data:
-                        response = requests.put(
-                            f"http://backend:8000/sales/{update_id}", json=update_data
-                        )
-                        show_response_message(response)
-                    else:
-                        st.error("Nenhuma informação fornecida para atualização")
+            update_sale()
     
     def about(self):
         st.title('Sobre o Projeto LiftOff Data')
