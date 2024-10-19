@@ -2,3 +2,4 @@ streamlit
 streamlit-option-menu
 requests
 pandas
+python-dotenv

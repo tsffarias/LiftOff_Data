@@ -3,17 +3,24 @@ from streamlit_option_menu import option_menu
 import pandas as pd
 import requests
 from datetime import datetime, time, date
+from utils import show_response_message
+
+from employee import create as create_employee, delete as delete_employee, read_all as read_all_employee, read_employee, update as update_employee
+from product import create as create_product, delete as delete_product, read_all as read_all_product, read_product, update as update_product
+from sales import create as create_sale, delete as delete_sale, read_all as read_all_sales, read_sale, update as update_sale
+from supplier import create as create_supplier, delete as delete_supplier, read_all as read_all_supplier, read_supplier, update as update_supplier
+
+st.set_page_config(
+            page_title="LiftOff",
+            layout="wide",
+            initial_sidebar_state="expanded"
+)
 
 class Dashboard:
     def __init__(self):
         self.layout()
 
     def layout(self):
-        st.set_page_config(
-            page_title="LiftOff",
-            layout="wide",
-            initial_sidebar_state="expanded")
-
         st.markdown("""
         <style>
         .big-font {
@@ -91,25 +98,6 @@ class Dashboard:
         st.subheader("Pronto para decolar? 🚀")
         if st.button("Agende uma Demo"):
             st.success("Obrigado pelo seu interesse! Nossa equipe entrará em contato em breve.")
-
-
-    # Função auxiliar para exibir mensagens de erro detalhadas
-    def show_response_message(self,response):
-        if response.status_code == 200:
-            st.success("Operação realizada com sucesso!")
-        else:
-            try:
-                data = response.json()
-                if "detail" in data:
-                    # Se o erro for uma lista, extraia as mensagens de cada erro
-                    if isinstance(data["detail"], list):
-                        errors = "\n".join([error["msg"] for error in data["detail"]])
-                        st.error(f"Erro: {errors}")
-                    else:
-                        # Caso contrário, mostre a mensagem de erro diretamente
-                        st.error(f"Erro: {data['detail']}")
-            except ValueError:
-                st.error("Erro desconhecido. Não foi possível decodificar a resposta.")
     
     def product(self):
         st.title("Gerenciamento de Produtos")
@@ -138,7 +126,7 @@ class Dashboard:
                             "email_fornecedor": email_fornecedor,
                         },
                     )
-                    self.show_response_message(response)
+                    show_response_message(response)
         # Visualizar Produtos
         with st.expander("Visualizar Produtos"):
             if st.button("Exibir Todos os Produtos"):
@@ -162,7 +150,7 @@ class Dashboard:
                     # Exibe o DataFrame sem o índice
                     st.dataframe(df, hide_index=True, width=None)
                 else:
-                    self.show_response_message(response)
+                    show_response_message(response)
 
         # Obter Detalhes de um Produto
         with st.expander("Obter Detalhes de um Produto"):
@@ -210,7 +198,7 @@ class Dashboard:
                             else:
                                 st.warning("Nenhum Produto encontrado!")
                         else:
-                            self.show_response_message(response)
+                            show_response_message(response)
 
         # Deletar Produto
         with st.expander("Deletar Produto"):
@@ -298,295 +286,25 @@ class Dashboard:
                         response = requests.put(
                             f"http://backend:8000/products/{update_id}", json=update_data
                         )
-                        self.show_response_message(response)
+                        show_response_message(response)
                     else:
                         st.error("Nenhuma informação fornecida para atualização")
 
-    def employee(self):
-        st.title("Gerenciamento de Funcionários")
-
-        # Adicionar Funcionário
-        with st.expander("Adicionar um Novo Funcionário"):
-            with st.form("new_employee"):
-                first_name = st.text_input("Nome")
-                last_name = st.text_input("Sobrenome")
-                email = st.text_input("Email")
-                phone_number = st.text_input("Número de Telefone")
-                hire_date = st.date_input("Data de Contratação")
-                department_id = st.number_input("ID do Departamento", min_value=1, step=1)
-                manager_id = st.number_input("ID do Gerente", min_value=1, step=1)
-                job_title = st.text_input("Cargo")
-                location = st.text_input("Localização")
-                birth_date = st.date_input("Data de Nascimento")
-                gender = st.selectbox("Gênero", ["Masculino", "Feminino", "Prefiro não dizer"])
-                nationality = st.text_input("Nacionalidade")
-                start_date = st.date_input("Data de Início")
-                salary = st.number_input("Salário", min_value=0.01, format="%.2f")
-                
-                submit_button = st.form_submit_button("Adicionar Funcionário")
-
-                if submit_button:
-                    response = requests.post(
-                        "http://backend:8000/employees/",
-                        json={
-                            "first_name": first_name,
-                            "last_name": last_name,
-                            "email": email,
-                            "phone_number": phone_number,
-                            "hire_date": hire_date.isoformat(),
-                            "department_id": department_id,
-                            "manager_id": manager_id,
-                            "job_title": job_title,
-                            "location": location,
-                            "birth_date": birth_date.isoformat(),
-                            "gender": gender,
-                            "nationality": nationality,
-                            "start_date": start_date.isoformat(),
-                            "salary": salary
-                        },
-                    )
-                    self.show_response_message(response)
+    def employee(self): 
+        # Criar funcionário
+        create_employee()
 
         # Visualizar Funcionários
-        with st.expander("Visualizar Funcionários"):
-            if st.button("Exibir Todos os Funcionários"):
-                response = requests.get("http://backend:8000/employees/")
-                if response.status_code == 200:
-                    employees = response.json()
-                    df = pd.DataFrame(employees)
-                    st.dataframe(df, hide_index=True, width=None)
-                else:
-                    self.show_response_message(response)
+        read_all_employee()
 
         # Obter Detalhes de um Funcionário
-        with st.expander("Obter Detalhes de um Funcionário"):
-            options = ["Selecione uma opção:", "ID", "Nome", "Sobrenome", "Email", "Telefone"]
-            select_search = st.selectbox("Buscar por:", options=options)
-
-            # Determina o estado do campo de entrada de texto
-            input_disabled = select_search == "Selecione uma opção:"
-
-            # Determina a mensagem do text_input
-            if input_disabled == True:
-                mensagem = "Selecione uma opção de pesquisa"
-            else:
-                mensagem = f"Pesquisar funcionário por {select_search}:"
-
-            # Entrada de texto para pesquisa
-            search_field = st.text_input(mensagem, disabled=input_disabled)
-
-            search_employee_bt = st.button("Buscar funcionário" , disabled=input_disabled, key="search_employee_button")
-
-            if search_employee_bt:
-                # Filtrando o DataFrame com base na entrada do usuário
-                if search_field.strip() == "":
-                    st.warning("Digite uma valor para ser pesquisado!")
-                else:
-                    if not input_disabled and search_field:
-                        response = requests.get(f"http://backend:8000/employees/")
-
-                        if response.status_code == 200:
-                            employee = response.json()
-                            df = pd.DataFrame(employee)
-                            
-                            if select_search == "Nome":
-                                df_employee = df[df['first_name'].str.contains(search_field, case=False, na=False)]
-                            elif select_search == "Sobrenome":
-                                df_employee = df[df['last_name'].str.contains(search_field, case=False, na=False)]
-                            elif select_search == "Email":
-                                df_employee = df[df['email'].str.contains(search_field, case=False, na=False)]
-                            elif select_search == "Telefone":
-                                df_employee = df[df['phone_number'].str.contains(search_field, case=False, na=False)]
-                            else:  # Assuming 'ID'
-                                df_employee = df[df['employee_id'].astype(str).str.contains(search_field, case=False, na=False)]
-                                
-                            if not df_employee.empty:
-                                st.dataframe(df_employee, hide_index=True, width=None)
-                            else:
-                                st.warning("Nenhum Funcionário encontrado!")
-                        else:
-                            self.show_response_message(response)
-
+        read_employee()
 
         # Deletar Funcionário
-        with st.expander("Deletar Funcionário"):
-
-            delete_id = st.number_input("Pesquisar funcionário por ID:", min_value=1, format="%d")
-
-            # Botão para consultar funcionário
-            if st.button("Buscar Funcionário", key="search_employee_delete_button"):
-                response = requests.get(f"http://backend:8000/employees/{delete_id}")
-                if response.status_code == 200:
-                    employee = response.json()
-                    df = pd.DataFrame([employee])
-
-                    # Seleciona as colunas desejadas
-                    df = df[
-                        [
-                            "employee_id",
-                            "first_name",
-                            "last_name",
-                            "email",
-                            "phone_number"
-                        ]
-                    ]
-
-                    # Concatenando Nome e Sobrenome
-                    df["full_name"] = df["first_name"] + " " + df["last_name"]
-
-                    # Salvando o funcionário encontrado no estado da sessão
-                    st.session_state['df_employee_del'] = df
-                    st.session_state['id_employee_del'] = delete_id
-                else:
-                    st.warning("Funcionário não encontrado!")
-                    st.session_state.pop('df_employee_del', None)
-
-            # Exibe as informações do funcionário, se encontrado
-            if 'df_employee_del' in st.session_state:    
-                st.text_input("Nome:", value=st.session_state["df_employee_del"].at[0, "full_name"], disabled=True, key="input_full_name")
-                st.text_input("E-mail:", value=st.session_state["df_employee_del"].at[0, "email"], disabled=True, key="input_email")
-                st.text_input("Telefone:", value=st.session_state["df_employee_del"].at[0, "phone_number"], disabled=True, key="input_phone")     
-
-                # Botão para deletar funcionário
-                if st.button("Deletar Funcionário"):
-                    response = requests.delete(f"http://backend:8000/employees/{st.session_state['id_employee_del']}")
-                    if response.status_code == 200:
-                        st.success("Funcionário deletado com sucesso!")
-                        st.session_state.pop('df_employee_del')
-                        st.session_state.pop('id_employee_del')
-                    else:
-                        st.error("Erro ao deletar o funcionário!")
-
-
+        delete_employee()
+        
         # Atualizar Funcionário
-        with st.expander("Atualizar Funcionário"):
-
-            update_id = str(st.number_input("Digite o id do Funcionário:",min_value=1, format="%d"))
-
-            # Botão para consultar cliente
-            search_update_employee_bt = st.button("Buscar Funcionário", key="search_employee_update_button")
-
-            if search_update_employee_bt:
-                df = pd.DataFrame()
-                response = requests.get(f"http://backend:8000/employees/{update_id}")
-                if response.status_code == 200:
-                    employee = response.json()
-                    df = pd.DataFrame([employee])
-
-                    df = df[
-                        [
-                            "employee_id",
-                            "first_name",
-                            "last_name",
-                            "email",
-                            "phone_number",
-                            "department_id",
-                            "manager_id",
-                            "job_title",
-                            "location",
-                            "gender",
-                            "birth_date",
-                            "nationality",
-                            "start_date",
-                            "salary",
-                            "termination_date",
-                            "hire_date",
-                            "service_duration"
-                        ]
-                    ]
-
-                   
-                    df['hire_date'] = pd.to_datetime(df['hire_date']).dt.date
-                    df['birth_date'] = pd.to_datetime(df['birth_date']).dt.date
-                    df['termination_date'] = pd.to_datetime(df['termination_date']).dt.date
-                    df['start_date'] = pd.to_datetime(df['start_date']).dt.date
-
-                else:
-                    st.warning("Funcionário não encontrado!")
-
-                if not df.empty:
-                    st.session_state['df_employee_upd'] = df
-                    st.session_state['id_employee_upd'] = update_id
-
-             # Verifica se o cliente foi encontrado e exibe as informações
-            if 'df_employee_upd' in st.session_state: 
-                with st.form("update_employee"):
-                    col1,col2=st.columns([2,3])
-
-                    gender_options = ["Masculino", "Feminino", "Prefiro não dizer"]
-                    current_gender = st.session_state["df_employee_upd"].at[0, "gender"]
-                    gender_index = gender_options.index(current_gender) if current_gender in gender_options else 0
-
-                    termination_date = st.session_state["df_employee_upd"].at[0, "termination_date"]
-                    if pd.isna(termination_date):  # Check if the date is NaT
-                        termination_date = None
-
-                    with col1:
-                        new_first_name = st.text_input("Novo Nome", value=st.session_state["df_employee_upd"].at[0,"first_name"], disabled=False, key="input_first_name")
-                        new_email = st.text_input("Novo Email", value=st.session_state["df_employee_upd"].at[0,"email"], disabled=False, key="input_email")   
-                        new_hire_date = st.date_input("Nova Data de Contratação", value=st.session_state["df_employee_upd"].at[0,"hire_date"], disabled=False, key="input_hire_date")
-                        new_birth_date = st.date_input("Nova Data de Nascimento", value=st.session_state["df_employee_upd"].at[0,"birth_date"], disabled=False, key="input_birth_date")
-                        new_department_id = st.number_input("Novo ID do Departamento", min_value=1, step=1, value=st.session_state["df_employee_upd"].at[0,"department_id"], disabled=False, key="input_department_id")
-                        new_job_title = st.text_input("Novo Cargo", value=st.session_state["df_employee_upd"].at[0,"job_title"], disabled=False, key="input_job_title")
-                        new_gender = st.selectbox("Novo Gênero", gender_options, index=gender_index, disabled=False, key="input_gender")
-                        new_nationality = st.text_input("Nova Nacionalidade", value=st.session_state["df_employee_upd"].at[0,"nationality"], disabled=False, key="input_nationality")
-                    with col2:
-                        new_last_name = st.text_input("Novo Sobrenome", value=st.session_state["df_employee_upd"].at[0,"last_name"], disabled=False, key="input_last_name")      
-                        new_phone_number = st.text_input("Novo Número de Telefone", value=st.session_state["df_employee_upd"].at[0,"phone_number"], disabled=False, key="input_phone_number")   
-                        new_termination_date = st.date_input("Nova Data de Terminação", value=termination_date, disabled=False, key="input_termination_date")
-                        new_start_date = st.date_input("Nova Data de Início", value=st.session_state["df_employee_upd"].at[0,"start_date"], disabled=False, key="input_start_date")
-                        new_manager_id = st.number_input("Novo ID do Gerente", min_value=1, step=1, value=st.session_state["df_employee_upd"].at[0,"manager_id"], disabled=False, key="input_manager_id")
-                        new_salary = st.number_input("Novo Salário", min_value=0.01, format="%.2f", value=st.session_state["df_employee_upd"].at[0,"salary"], disabled=False, key="input_salary")
-                        new_location = st.text_input("Nova Localização", value=st.session_state["df_employee_upd"].at[0,"location"], disabled=False, key="input_location")
-                                        
-
-                    update_employee_bt = st.form_submit_button("Atualizar Funcionário")
-
-                    if update_employee_bt:
-                        employee_updated = {}
-                        employee_updated["first_name"] = new_first_name
-                        employee_updated["last_name"] = new_last_name
-                        employee_updated["email"] = new_email
-                        employee_updated["phone_number"] = new_phone_number
-                        employee_updated["department_id"] = new_department_id
-                        employee_updated["job_title"] = new_job_title
-                        employee_updated["gender"] = new_gender
-                        employee_updated["nationality"] = new_nationality
-                        employee_updated["manager_id"] = new_manager_id
-                        employee_updated["salary"] = new_salary
-                        employee_updated["location"] = new_location
-
-                        if new_termination_date is not None:
-                            employee_updated["termination_date"] = new_termination_date.strftime("%Y-%m-%d")  # Convert to string
-                        else:
-                            employee_updated["termination_date"] = None
-
-                        if new_hire_date is not None:
-                            employee_updated["hire_date"] = new_hire_date.strftime("%Y-%m-%d")
-                        else:
-                            employee_updated["hire_date"] = None
-
-                        if new_birth_date is not None:
-                            employee_updated["birth_date"] = new_birth_date.strftime("%Y-%m-%d")
-                        else:
-                            employee_updated["birth_date"] = None
-
-                        if new_start_date is not None:
-                            employee_updated["start_date"] = new_start_date.strftime("%Y-%m-%d")
-                        else:
-                            employee_updated["start_date"] = None
-
-                        if employee_updated:
-                            response = requests.put(
-                                    f"http://backend:8000/employees/{st.session_state['id_employee_upd']}", json=employee_updated
-                                )            
-                            
-                            if response.status_code == 200:
-                                st.success("Funcionário atualizado com sucesso!")
-                                del st.session_state['df_employee_upd']
-                                del st.session_state['id_employee_upd'] 
-                            else:
-                                st.error("Erro ao atualizar Funcionário.")
+        update_employee()
 
     def supplier(self):
         st.title("Gerenciamento de Fornecedores")
@@ -621,7 +339,7 @@ class Dashboard:
                             "primary_product": primary_product,
                         },
                     )
-                    self.show_response_message(response)
+                    show_response_message(response)
 
         # Visualizar Fornecedores
         with st.expander("Visualizar Fornecedores"):
@@ -632,7 +350,7 @@ class Dashboard:
                     df = pd.DataFrame(suppliers)
                     st.dataframe(df, hide_index=True, width=None)
                 else:
-                    self.show_response_message(response)
+                    show_response_message(response)
 
         # Obter Detalhes de um Fornecedor
         with st.expander("Obter Detalhes de um Fornecedor"):
@@ -677,7 +395,7 @@ class Dashboard:
                             else:
                                 st.warning("Nenhum Fornecedor encontrado!")
                         else:
-                            self.show_response_message(response)
+                            show_response_message(response)
 
         # Deletar Fornecedor
         with st.expander("Deletar Fornecedor"):
@@ -769,7 +487,7 @@ class Dashboard:
                         response = requests.put(
                             f"http://backend:8000/suppliers/{update_id}", json=update_data
                         )
-                        self.show_response_message(response)
+                        show_response_message(response)
                     else:
                         st.error("Nenhuma informação fornecida para atualização")
 
@@ -800,7 +518,7 @@ class Dashboard:
                             "produto": produto,
                         },
                     )
-                    self.show_response_message(response)
+                    show_response_message(response)
 
         # Visualizar Vendas
         with st.expander("Visualizar Vendas"):
@@ -811,7 +529,7 @@ class Dashboard:
                     df = pd.DataFrame(sales)
                     st.dataframe(df, hide_index=True, width=None)
                 else:
-                    self.show_response_message(response)
+                    show_response_message(response)
 
         # Obter Detalhes de uma Venda
         with st.expander("Obter Detalhes de uma Venda"):
@@ -862,14 +580,14 @@ class Dashboard:
                             else:
                                 st.warning("Nenhuma Venda encontrada!")
                         else:
-                            self.show_response_message(response)
+                            show_response_message(response)
 
         # Deletar Venda
         with st.expander("Deletar Venda"):
             delete_id = st.number_input("ID da Venda para Deletar", min_value=1, format="%d")
             if st.button("Deletar Venda"):
                 response = requests.delete(f"http://backend:8000/sales/{delete_id}")
-                self.show_response_message(response)
+                show_response_message(response)
 
         # Atualizar Venda
         with st.expander("Atualizar Venda"):
@@ -901,7 +619,7 @@ class Dashboard:
                         response = requests.put(
                             f"http://backend:8000/sales/{update_id}", json=update_data
                         )
-                        self.show_response_message(response)
+                        show_response_message(response)
                     else:
                         st.error("Nenhuma informação fornecida para atualização")
     
