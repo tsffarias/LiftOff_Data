@@ -1,0 +1,13 @@
+data_warehouse:  
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: "{{ env_var('DB_USER_PROD') }}"
+      password: "{{ env_var('DB_PASS_PROD') }}"
+      port: 5432
+      dbname: "{{ env_var('DB_NAME_PROD') }}"
+      schema: "{{ env_var('DB_SCHEMA', 'public') }}"
+      threads: 1
+      keepalives_idle: 0
+  target: dev
