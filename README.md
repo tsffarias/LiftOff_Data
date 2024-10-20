@@ -120,6 +120,10 @@ graph TD
 - **Descrição:** DBT (Data Build Tool) é uma ferramenta de transformação de dados que permite a construção de modelos SQL e a aplicação de boas práticas de desenvolvimento de software ao ETL.
 - **Uso no Projeto:** Utilizado para transformar os dados das camadas Bronze e Silver, preparando-os para a camada Gold, onde estarão prontos para consumo pelos analistas.
 
+<p align="center">
+<img src = "./img/lineage.png">
+</p>
+
 #### **Briefer**
 
 - **Descrição:** Briefer é uma plataforma colaborativa de dados que permite que equipes de analistas acessem, compartilhem e analisem dados de maneira colaborativa.
