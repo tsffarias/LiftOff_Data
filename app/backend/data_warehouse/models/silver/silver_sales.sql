@@ -4,7 +4,7 @@ WITH silver_sales AS (
     SELECT 
         email, 
         DATE(data) AS data,
-        valor, 
+        round(cast(valor as decimal(10, 2)), 2) as valor, 
         quantidade, 
         produto
     FROM 
