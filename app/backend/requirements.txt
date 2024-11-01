@@ -5,3 +5,6 @@ email-validator
 psycopg2-binary
 python-dotenv
 dbt-postgres
+duckdb
+tqdm
+faker

@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:latest
+    image: pgduckdb/pgduckdb:16-main
     volumes:
       - postgresql_bin:/usr/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data

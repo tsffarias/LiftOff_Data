@@ -64,6 +64,10 @@ graph TD
 
 ### **Tecnologias Utilizadas**
 
+#### PostgreSQL com pg_duckdb
+- **Descrição:** O PostgreSQL é um dos bancos de dados relacionais de código aberto mais robustos e amplamente adotados no mercado. Com a extensão pg_duckdb, ele ganha a capacidade de executar consultas analíticas complexas em um armazenamento colunar otimizado, combinando a escalabilidade e a confiabilidade do PostgreSQL com a performance analítica da DuckDB.
+- **Uso no Projeto:** Utilizado como banco de dados principal e para operações analíticas de grande volume, permitindo que consultas intensivas sejam processadas de forma mais rápida e eficiente.
+
 #### **Streamlit**
 
 - **Descrição:** Streamlit é uma biblioteca Python de código aberto que permite a criação de aplicativos web interativos de forma rápida e fácil. Utilizado principalmente para construir dashboards e interfaces de dados, o Streamlit é ideal para prototipagem rápida e visualização de dados sem a necessidade de conhecimentos avançados em desenvolvimento web.
