@@ -8,3 +8,5 @@ dbt-postgres
 duckdb
 tqdm
 faker
+pandas
+pyarrow

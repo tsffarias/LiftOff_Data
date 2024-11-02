@@ -213,6 +213,10 @@ Para iniciar a aplicação, execute:
 
 ```bash
 docker-compose up -d --build
+-- inserir dados fake na base de dados
+docker-compose exec backend sh
+python generate_dataset/generate_raw.py
+python generate_dataset/load_raw_to_postgres.py
 ```
 
 #### **1. Criar o Repositório**
