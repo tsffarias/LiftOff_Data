@@ -22,7 +22,7 @@ class SupplierModel(Base):
 
     __tablename__ = "suppliers"
 
-    supplier_id = Column(Integer, primary_key=True, index=True)
+    supplier_id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     company_name = Column(String, index=True, nullable=False)
     contact_name = Column(String, nullable=False)
     email = Column(String, index=True, nullable=False)

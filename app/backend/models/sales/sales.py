@@ -19,7 +19,7 @@ class SalesModel(Base):
 
     __tablename__ = "sales"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     email = Column(String, index=True)
     valor = Column(Float, index=True)
     quantidade = Column(Integer, index=True)

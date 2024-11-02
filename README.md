@@ -201,10 +201,10 @@ graph TD
 
 ### **Passos para Configuração e Execução**
 
-## Instalação via docker
-Antes de rodar o Docker, crie um arquivo .env na raiz do projeto com os seguintes valores:
+## Instalação via Docker
+1. Antes de rodar o Docker, crie um arquivo `.env` na raiz do projeto com os seguintes valores:
 
-```
+```plaintext
 DB_HOST_PROD = postgres
 DB_PORT_PROD = 5432
 DB_NAME_PROD = mydatabase
@@ -214,84 +214,38 @@ PGADMIN_EMAIL = email_pgadmin
 PGADMIN_PASSWORD = password_pgadmin
 ```
 
-Para iniciar a aplicação, execute:
+2. Para iniciar a aplicação, execute:
 
 ```bash
 docker-compose up -d --build
--- inserir dados fake na base de dados
-docker-compose exec backend sh
-python generate_dataset/generate_raw.py
-python generate_dataset/load_raw_to_postgres.py
 ```
 
-#### **1. Criar o Repositório**
+### **Geração de Dados Fake e Inserção no Banco de Dados**
+Este projeto inclui um pipeline para geração e inserção de dados fictícios de forma automatizada:
+- **Geração de dados com Faker**: os scripts utilizam a biblioteca Faker para criar dados de teste em escala realista para várias tabelas de negócios, incluindo `employees`, `products`, `sales`, e `suppliers`.
+- **Inserção no PostgreSQL**: os dados gerados são salvos em arquivos Parquet e carregados diretamente no banco de dados PostgreSQL usando DuckDB, com ajuste de sequências para prevenir problemas de IDs duplicados.
 
-- **Passo:** Inicie um novo repositório no GitHub ou GitLab para versionar o projeto.
-- **Comando:**
-  ```bash
-  git init
-  ```
+Para gerar e inserir os dados, entre no container backend e execute os comandos:
 
-#### **2. Escolher a Versão do Python para 3.12.3**
+```bash
+docker-compose exec backend sh
+python generate_dataset/generate_raw.py  # Gera os dados em Parquet
+python generate_dataset/load_raw_to_postgres.py  # Insere os dados no PostgreSQL
+```
 
-- Utilize `pyenv` para gerenciar e definir a versão correta do Python:
-  ```bash
-  pyenv install 3.12.3
-  pyenv local 3.12.3
-  ```
+---
 
-#### **3. Criar um Ambiente Virtual**
+### **6. Executar o Frontend**
 
-- **Passo:** Crie um ambiente virtual para isolar as dependências do projeto.
-- **Comando:**
-  ```bash
-  python3.12 -m venv .venv
-  ```
+Este projeto oferece uma interface visual desenvolvida em Streamlit, onde é possível visualizar e interagir com os dados carregados.
 
-#### **4. Entrar no Ambiente Virtual**
+- **Comando para iniciar o frontend no Streamlit** (disponível em [http://localhost:8501/](http://localhost:8501/)):
+```bash
+streamlit run app/frontend/app.py
+```
 
-- **Comando:**
-  - **Windows:**
-    ```bash
-    .venv\Scripts\activate
-    ```
-  - **Linux/Mac:**
-    ```bash
-    source .venv/bin/activate
-    ```
+--- 
 
-#### **5. Instalar as Dependências**
-
-- **Instalar os pacotes necessários:**
-  ```bash
-  pip install -r requirements.txt
-  ```
-
-#### **6. Executar o Frontend**
-
-- **Comando para rodar o frontend com Streamlit:**
-  ```bash
-  streamlit run app.py
-  ```
-
-#### **7. Configurar o PostgreSQL**
-
-- **Criar o banco de dados e a tabela necessária:**
-  ```sql
-  CREATE DATABASE crm_vendas;
-  CREATE TABLE vendas (
-      id SERIAL PRIMARY KEY,
-      email VARCHAR(255) NOT NULL,
-      data TIMESTAMP NOT NULL,
-      valor NUMERIC NOT NULL,
-      quantidade INTEGER NOT NULL,
-      produto VARCHAR(50) NOT NULL
-  );
-  ```
-
-#### **8. Criar a Conexão com o PostgreSQL**
-
-- A conexão é gerenciada no módulo `database.py` utilizando `psycopg2`.
 
 ### **Conclusão**
 

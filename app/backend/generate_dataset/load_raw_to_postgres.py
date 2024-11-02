@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 import glob
 import time
+from sqlalchemy import create_engine, text
 
 start_time = time.time()
 
@@ -18,7 +19,7 @@ DB_USER = os.getenv('DB_USER_PROD')
 DB_PASS = os.getenv('DB_PASS_PROD')
 
 # Criar a URL de conexão do banco de dados
-postgres_conn = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@postgres:{DB_PORT}/{DB_NAME}"
+postgres_conn = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # Conexão com o DuckDB e o PostgreSQL
 con = duckdb.connect()
@@ -34,6 +35,15 @@ con.execute(f"""
     ATTACH 'dbname={DB_NAME} user={DB_USER} password={DB_PASS} host={DB_HOST} port={DB_PORT}' AS postgres_db (TYPE POSTGRES, SCHEMA 'public');
 """)
 
+# Função para ajustar a sequência automaticamente
+def ajustar_sequencia(postgres_table, sequence_name, id_column):
+    engine = create_engine(postgres_conn)
+    with engine.connect() as connection:
+        # Ajustar sequência sem cross-database reference
+        max_id = connection.execute(text(f"SELECT MAX({id_column}) FROM {postgres_table}")).scalar()
+        if max_id is not None:
+            connection.execute(text(f"SELECT setval('{sequence_name}', :new_val)"), {"new_val": max_id + 1})
+    engine.dispose()
 
 # Função para criar a tabela se ela não existir
 def create_table_if_not_exists(postgres_table, schema):
@@ -43,7 +53,7 @@ def create_table_if_not_exists(postgres_table, schema):
     """)
 
 # Função para carregar arquivos Parquet e transferir para PostgreSQL
-def load_parquet_to_postgres(parquet_dir, postgres_table):
+def load_parquet_to_postgres(parquet_dir, postgres_table, sequence_name, id_column):
     # Listar todos os arquivos Parquet
     parquet_files = glob.glob(os.path.join(parquet_dir, '*.parquet'))
     
@@ -70,18 +80,21 @@ def load_parquet_to_postgres(parquet_dir, postgres_table):
         """)
     
     print(f"Dados de {parquet_dir} carregados na tabela {postgres_table} no PostgreSQL")
+    
+    # Ajustar a sequência automaticamente após inserir dados
+    ajustar_sequencia(postgres_table, sequence_name, id_column)
 
-# Caminhos para as pastas de arquivos Parquet
-parquet_dir_employee = './app/backend/datasets/raw_data/employee/'
-parquet_dir_product = './app/backend/datasets/raw_data/product/'
-parquet_dir_sales = './app/backend/datasets/raw_data/sales/'
-parquet_dir_supplier = './app/backend/datasets/raw_data/supplier/'
+# Caminhos para as pastas de arquivos Parquet e configurações de sequência
+parquet_config = [
+    {"dir": './app/backend/datasets/raw_data/employee/', "table": "employees", "sequence": "employees_employee_id_seq", "id_column": "employee_id"},
+    {"dir": './app/backend/datasets/raw_data/product/', "table": "products", "sequence": "products_id_seq", "id_column": "id"},
+    {"dir": './app/backend/datasets/raw_data/sales/', "table": "sales", "sequence": "sales_id_seq", "id_column": "id"},
+    {"dir": './app/backend/datasets/raw_data/supplier/', "table": "suppliers", "sequence": "suppliers_supplier_id_seq", "id_column": "supplier_id"},
+]
 
 # Carregar os arquivos Parquet para PostgreSQL de acordo com os modelos de dados
-load_parquet_to_postgres(parquet_dir_employee, 'employees')
-load_parquet_to_postgres(parquet_dir_product, 'products')
-load_parquet_to_postgres(parquet_dir_sales, 'sales')
-load_parquet_to_postgres(parquet_dir_supplier, 'suppliers')
+for config in parquet_config:
+    load_parquet_to_postgres(config["dir"], config["table"], config["sequence"], config["id_column"])
 
 # Fechar a conexão
 con.close()

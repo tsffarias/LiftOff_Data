@@ -19,7 +19,7 @@ class ProductModel(Base):
 
     __tablename__ = "products"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     name = Column(String, index=True)
     description = Column(String, index=True)
     price = Column(Float, index=True)
