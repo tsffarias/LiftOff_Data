@@ -10,3 +10,4 @@ tqdm
 faker
 pandas
 pyarrow
+boto3
