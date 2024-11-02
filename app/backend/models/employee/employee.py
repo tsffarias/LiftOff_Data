@@ -40,7 +40,7 @@ class EmployeeModel(Base):
     job_title = Column(String)
     location = Column(String)
     birth_date = Column(Date)
-    gender = Column(SQLAlchemyEnum(GenderEnum))
+    gender = Column(String)
     nationality = Column(String)
     start_date = Column(Date)
     salary = Column(Float)

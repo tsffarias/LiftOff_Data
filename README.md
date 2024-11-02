@@ -68,6 +68,11 @@ graph TD
 - **Descrição:** O PostgreSQL é um dos bancos de dados relacionais de código aberto mais robustos e amplamente adotados no mercado. Com a extensão pg_duckdb, ele ganha a capacidade de executar consultas analíticas complexas em um armazenamento colunar otimizado, combinando a escalabilidade e a confiabilidade do PostgreSQL com a performance analítica da DuckDB.
 - **Uso no Projeto:** Utilizado como banco de dados principal e para operações analíticas de grande volume, permitindo que consultas intensivas sejam processadas de forma mais rápida e eficiente.
 
+#### FastAPI com Swagger
+- **Descrição:** FastAPI é um framework moderno e de alto desempenho para a construção de APIs com Python 3.6+ baseado em tipos de dados. Ele é projetado para ser rápido e fácil de usar, oferecendo validação automática de dados e documentação interativa.
+- **Uso no Projeto:** Utilizado para criar a API que manipula dados de funcionários, produtos e vendas. O FastAPI gera automaticamente a documentação da API utilizando Swagger, permitindo que os desenvolvedores testem as endpoints diretamente pela interface.
+- **Acessando o Swagger:** Após iniciar a aplicação com o comando `uvicorn main:app --reload`, a documentação do Swagger pode ser acessada em `http://127.0.0.1:8000/docs`.
+
 #### **Streamlit**
 
 - **Descrição:** Streamlit é uma biblioteca Python de código aberto que permite a criação de aplicativos web interativos de forma rápida e fácil. Utilizado principalmente para construir dashboards e interfaces de dados, o Streamlit é ideal para prototipagem rápida e visualização de dados sem a necessidade de conhecimentos avançados em desenvolvimento web.

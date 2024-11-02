@@ -11,15 +11,6 @@ import os
 
 # Inicializando o Faker para dados em português
 fake = Faker('pt_BR')
-
-class GenderEnum(Enum):
-    """
-    Enum representando os gêneros dos funcionários.
-    """
-    male = "Masculino"
-    female = "Feminino"
-    prefer_not_to_say = "Prefiro não dizer"
-
 class CategoriaBase(Enum):
     """
     Enum representando as categorias de produtos.
@@ -67,7 +58,7 @@ def gerar_dados_employee(n_linhas=5000):
             'job_title': fake.job(),
             'location': f"{fake.city()}, {fake.state()}, Brasil",
             'birth_date': fake.date_of_birth(minimum_age=18, maximum_age=70),
-            'gender': random.choice(list(GenderEnum)).value,
+            'gender': random.choice(['Masculino', 'Feminino', 'Prefiro não dizer']),
             'nationality': 'Brasileiro(a)',
             'start_date': fake.date_between(start_date='-5y', end_date='today'),
             'salary': round(random.uniform(2000, 15000), 2),
@@ -76,7 +67,6 @@ def gerar_dados_employee(n_linhas=5000):
         })
     
     return pd.DataFrame(data)
-
 
 # Função para gerar dados de produtos (products)
 def gerar_dados_product(n_linhas=5000):

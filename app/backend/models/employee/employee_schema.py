@@ -43,7 +43,7 @@ class EmployeeBase(BaseModel):
     job_title: str
     location: str
     birth_date: date
-    gender: GenderEnum
+    gender: str
     nationality: str
     start_date: date
     salary: PositiveFloat
@@ -105,7 +105,7 @@ class EmployeeUpdate(BaseModel):
     job_title: Optional[str] = None
     manager_id: Optional[int] = None
     location: Optional[str] = None
-    gender: Optional[GenderEnum] = None
+    gender: Optional[str] = None
     nationality: Optional[str] = None
     start_date: Optional[date] = None
     hire_date: Optional[date] = None
