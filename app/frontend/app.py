@@ -88,7 +88,7 @@ class Dashboard:
                 """
             )
         with col2:
-            st.image("https://www.scrapehero.com/wp/wp-content/uploads/2019/05/price-monitoring.gif", use_column_width=True)
+            st.image("https://www.scrapehero.com/wp/wp-content/uploads/2019/05/price-monitoring.gif", use_container_width=True)
             st.markdown("### 📈 Visualize seu Sucesso")
             st.metric(label="Aumento na Eficiência de Dados", value="300%", delta="50%")
             st.metric(label="Redução de Custos Operacionais", value="40%", delta="-15%")
@@ -206,14 +206,13 @@ class Dashboard:
         ### Componentes Chave:
         1. Pipeline em camadas: Bronze, Silver e Gold
         2. Integração com APIs
-        3. Kafka para streaming de dados
-        4. Airbyte para ingestão de dados
-        5. Airflow para orquestração de tarefas
-        6. DBT para transformação de dados
-        7. Plataforma 'Briefer' para acesso e utilização dos dados transformados
+        3. Airbyte para ingestão de dados
+        4. Airflow para orquestração de tarefas
+        5. DBT para transformação de dados
+        6. Plataforma 'Briefer' para acesso e utilização dos dados transformados
         """)
 
-        st.image("https://raw.githubusercontent.com/tsffarias/LiftOff_Data/refs/heads/main/img/arquitetura_1.3.png", use_column_width=True, caption="Arquitetura do Pipeline de Dados")
+        st.image("https://raw.githubusercontent.com/tsffarias/LiftOff_Data/refs/heads/main/img/arquitetura_1.3.png", use_container_width=True, caption="Arquitetura do Pipeline de Dados")
 
         st.divider()
 
@@ -231,7 +230,7 @@ class Dashboard:
             """)
 
         with col2:
-            st.image("https://www.scrapehero.com/wp/wp-content/uploads/2019/05/api-gif.gif", use_column_width=True, caption="Integração de Dados em Ação")
+            st.image("https://www.scrapehero.com/wp/wp-content/uploads/2019/05/api-gif.gif", use_container_width=True, caption="Integração de Dados em Ação")
 
 if __name__ == "__main__":
     Dashboard()

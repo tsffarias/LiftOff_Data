@@ -8,6 +8,11 @@ services:
       POSTGRES_DB: ${DB_NAME_PROD} 
       POSTGRES_USER: ${DB_USER_PROD}
       POSTGRES_PASSWORD: ${DB_PASS_PROD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "5432:5432"
     networks:
@@ -25,6 +30,8 @@ services:
       DB_NAME_PROD: ${DB_NAME_PROD}
       DB_USER_PROD: ${DB_USER_PROD}
       DB_PASS_PROD: ${DB_PASS_PROD}
+    env_file:
+    - .env
     ports:
       - "8000:8000"
     depends_on:
@@ -38,6 +45,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./app/frontend:/app
+    env_file:
+    - .env
     ports:
       - "8501:8501"
     networks:

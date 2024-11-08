@@ -1,0 +1,23 @@
+[
+    {
+        "data": "2024-11-02",
+        "produto": "ZapFlow com Llama3.0",
+        "total_valor": 1503.83,
+        "total_quantidade": 1,
+        "total_vendas": 1
+    },
+    {
+        "data": "2024-11-02",
+        "produto": "ZapFlow com Gemini",
+        "total_valor": 355.0,
+        "total_quantidade": 5,
+        "total_vendas": 1
+    },
+    {
+        "data": "2024-11-02",
+        "produto": "ZapFlow com chatGPT",
+        "total_valor": 3163.4,
+        "total_quantidade": 4,
+        "total_vendas": 2
+    }
+]

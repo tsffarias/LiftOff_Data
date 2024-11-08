@@ -3,3 +3,8 @@ streamlit-option-menu
 requests
 pandas
 python-dotenv
+groq
+openai
+chromadb
+psycopg2-binary
+sqlalchemy

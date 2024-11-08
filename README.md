@@ -16,10 +16,16 @@
 
 ### **Introdução**
 
-Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltada para startups, com foco em integração de dados de vendas a partir de APIs e CRMs, utilizando tecnologias modernas e acessíveis. O objetivo é criar uma solução escalável para ingestão, transformação e visualização de dados, garantindo que tanto engenheiros de dados quanto analistas possam colaborar eficientemente. A arquitetura proposta inclui a divisão do pipeline em múltiplas camadas (Bronze, Silver e Gold), integração com APIs, Kafka para streaming, Airbyte para ingestão de dados, Airflow para orquestração e DBT para transformação de dados. A plataforma colaborativa "Briefer" também é integrada, permitindo que analistas de dados acessem e utilizem os dados transformados de forma eficiente.
+Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltada para startups, com foco em integração de dados de vendas a partir de APIs e CRMs, utilizando tecnologias modernas e acessíveis. O objetivo é criar uma solução escalável para ingestão, transformação e visualização de dados, garantindo que tanto engenheiros de dados quanto analistas possam colaborar eficientemente. A arquitetura proposta inclui a divisão do pipeline em múltiplas camadas (Bronze, Silver e Gold), integração com APIs, Airbyte para ingestão de dados, Airflow para orquestração e DBT para transformação de dados. A plataforma colaborativa "Briefer" também é integrada, permitindo que analistas de dados acessem e utilizem os dados transformados de forma eficiente.
 
 <p align="center">
 <img src = "./img/arquitetura_1.3.png">
+</p>
+
+#### **Assistente Virtual Especialista em Analise de Dados e Vendas**
+
+<p align="center">
+<img src = "./img/top3_vendedores.png">
 </p>
 
 ### **Sequence Diagram**
@@ -114,11 +120,6 @@ graph TD
 - **Descrição:** Airbyte é uma plataforma de integração de dados de código aberto que permite conectar facilmente APIs, bancos de dados e outros sistemas para ingestão de dados em tempo real.
 - **Uso no Projeto:** Responsável pela ingestão de dados a partir de diferentes APIs e fontes de dados, garantindo que os dados sejam movidos para as camadas corretas do pipeline.
 
-#### **Kafka**
-
-- **Descrição:** Apache Kafka é uma plataforma de streaming distribuída que permite a publicação e assinatura de fluxos de dados em tempo real.
-- **Uso no Projeto:** Utilizado para gerenciar o fluxo de dados de maneira escalável e garantir que os dados sejam processados de forma contínua e eficiente.
-
 #### **Airflow**
 
 - **Descrição:** Apache Airflow é uma plataforma de orquestração de workflows que permite o agendamento e monitoramento de pipelines de dados.
@@ -212,6 +213,9 @@ DB_USER_PROD = user
 DB_PASS_PROD = password
 PGADMIN_EMAIL = email_pgadmin
 PGADMIN_PASSWORD = password_pgadmin
+
+OPENAI_API_KEY= api_key
+GROQ_API_KEY= api_key
 ```
 
 2. Para iniciar a aplicação, execute:
@@ -225,15 +229,54 @@ Este projeto inclui um pipeline para geração e inserção de dados fictícios 
 - **Geração de dados com Faker**: os scripts utilizam a biblioteca Faker para criar dados de teste em escala realista para várias tabelas de negócios, incluindo `employees`, `products`, `sales`, e `suppliers`.
 - **Inserção no PostgreSQL**: os dados gerados são salvos em arquivos Parquet e carregados diretamente no banco de dados PostgreSQL usando DuckDB, com ajuste de sequências para prevenir problemas de IDs duplicados.
 
-Para gerar e inserir os dados, entre no container backend e execute os comandos:
+#### **Passos para Gerar e Inserir os Dados no Banco de Dados**
 
-```bash
-docker-compose exec backend sh
-python generate_dataset/generate_raw.py  # Gera os dados em Parquet
-python generate_dataset/load_raw_to_postgres.py  # Insere os dados no PostgreSQL
-```
+1. Acesse o container `backend` para executar os scripts de geração e carregamento de dados:
+    ```bash
+    docker-compose exec backend sh
+    ```
 
----
+2. Execute os seguintes comandos para gerar e inserir os dados:
+
+    - Gerar dados em formato Parquet:
+        ```bash
+        python generate_dataset/generate_raw.py
+        ```
+
+    - Inserir os dados gerados no PostgreSQL:
+        ```bash
+        python generate_dataset/load_raw_to_postgres.py
+        ```
+
+3. **Executar DBT para Processamento de Dados**  
+   Para rodar o DBT (Data Build Tool) e transformar os dados, execute:
+   ```bash
+   cd app/backend/data_warehouse/
+   dbt run
+   ```
+
+4. **Gerar Arquivos para o Assistente OpenAI**  
+   Para extrair dados e criar arquivos JSON que serão utilizados pelo assistente OpenAI:
+   ```bash
+   docker-compose exec frontend sh
+   python AI/extract_data_json.py
+   ```
+
+5. **Abrir a Interface do Assistente AI no Streamlit**  
+   Para acessar a interface do assistente especializada em análise de vendas e insights:
+   ```bash
+   streamlit run app/frontend/AI/main.py
+   ```
+
+#### **Prompt do Assistente de Vendas**
+
+> **Assistente Especializado em Vendas**  
+> Você é um especialista em análise e insights para equipes de vendas, focado em otimizar o desempenho de vendas, gerenciar estoques de maneira eficiente e melhorar o relacionamento com fornecedores. Sua expertise abrange a análise de dados de produtos, avaliação de desempenho de vendedores, produtividade dos funcionários e gestão de fornecedores.
+>
+> Para cada solicitação, responda com um resumo direto e insights práticos, seguidos de recomendações detalhadas.  
+> A linguagem deve ser profissional, objetiva e prática, utilizando gráficos e visualizações sempre que possível para facilitar a compreensão dos dados.
+
+--- 
 
 ### **6. Executar o Frontend**
 
@@ -249,7 +292,7 @@ streamlit run app/frontend/app.py
 
 ### **Conclusão**
 
-Este projeto de arquitetura de pipeline de dados para startups oferece uma solução eficiente, escalável e de baixo custo para lidar com o processamento e análise de grandes volumes de dados de vendas. Com a utilização de ferramentas modernas como Airbyte, Kafka, Airflow, DBT e Briefer, o pipeline garante a ingestão, transformação e disponibilização dos dados em camadas organizadas (Bronze, Silver, Gold), permitindo uma análise colaborativa e em tempo real.
+Este projeto de arquitetura de pipeline de dados para startups oferece uma solução eficiente, escalável e de baixo custo para lidar com o processamento e análise de grandes volumes de dados de vendas. Com a utilização de ferramentas modernas como Airbyte, Airflow, DBT e Briefer, o pipeline garante a ingestão, transformação e disponibilização dos dados em camadas organizadas (Bronze, Silver, Gold), permitindo uma análise colaborativa e em tempo real.
 
 Essa arquitetura modular e flexível facilita a adaptação e o crescimento conforme a demanda aumenta, tornando-se uma excelente escolha para startups que precisam otimizar seus processos de dados sem comprometer o orçamento.
 
