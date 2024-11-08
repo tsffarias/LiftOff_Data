@@ -35,6 +35,19 @@ def responder_pergunta(pergunta):
     latest_message = messages[0]
     return latest_message.content[0].text.value.strip()
 
+# Função para mostrar a resposta de forma "streaming"
+def mostrar_resposta_streaming(resposta):
+    with st.chat_message("assistant"):
+        # Placeholder para atualizar o texto progressivamente
+        resposta_display = st.empty()
+        
+        # Remove o "pensando..." e começa a mostrar a resposta gradual
+        resposta_temporaria = ""
+        for char in resposta:
+            resposta_temporaria += char  # Adiciona o próximo caractere
+            resposta_display.markdown(resposta_temporaria)  # Atualiza o texto exibido
+            time.sleep(0.01)  # Intervalo entre caracteres
+
 # Configurações e título estilizado
 st.set_page_config(page_title="Assistente Virtual 🤖💬", page_icon="🤖")
 st.title("Assistente Virtual 🤖💬")
@@ -61,13 +74,17 @@ if pergunta:
     with st.chat_message("user"):
         st.markdown(pergunta)
 
+    # Exibir a mensagem "pensando..." antes de chamar a API
+    pensando_display = st.empty()  # Placeholder para "pensando..."
+    pensando_display.markdown("Pensando... 🤔")  # Exibe "pensando..."
+
     # Enviar pergunta para o assistente e obter a resposta
     resposta = responder_pergunta(pergunta)
     
-    # Armazenar resposta no histórico
+    # Remove o "pensando..." e mostra a resposta em modo "streaming"
+    pensando_display.empty()  # Remove "pensando..." antes de mostrar a resposta
     st.session_state.messages.append({"role": "assistant", "content": resposta})
-    with st.chat_message("assistant"):
-        st.markdown(resposta)
+    mostrar_resposta_streaming(resposta)
 
 
 # Prompt "Assistente Especializado em Vendas"

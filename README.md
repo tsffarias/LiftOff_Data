@@ -22,7 +22,8 @@ Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltad
 <img src = "./img/arquitetura_1.3.png">
 </p>
 
-#### **Assistente Virtual Especialista em Analise de Dados e Vendas**
+#### **Assistente IA Especialista em Analise de Dados e Vendas**
+Além do pipeline de dados, o projeto inclui uma interface de assistente AI no Streamlit, que possibilita interagir com um modelo de IA, como ChatGPT ou Llama3. Essa interface oferece uma experiência prática para análise de vendas e insights, permitindo que analistas façam perguntas e obtenham respostas rápidas e insights relevantes.
 
 <p align="center">
 <img src = "./img/top3_vendedores.png">
@@ -262,11 +263,22 @@ Este projeto inclui um pipeline para geração e inserção de dados fictícios 
    python AI/extract_data_json.py
    ```
 
-5. **Abrir a Interface do Assistente AI no Streamlit**  
-   Para acessar a interface do assistente especializada em análise de vendas e insights:
-   ```bash
-   streamlit run app/frontend/AI/main.py
-   ```
+5. **Criar o Assistente de IA na OpenAI**
+Para configurar o projeto e permitir que ele se comunique com o assistente de IA, é necessário criar um assistente personalizado na plataforma da OpenAI e recuperar o `ASSISTANT_ID`. Este ID será usado para vincular o código ao assistente que você criou, garantindo que todas as funcionalidades de IA estejam operacionais.
+
+- **Passo a Passo:**
+  1. Acesse a plataforma da OpenAI e navegue até a seção de **Assistentes de IA**.
+  2. Crie um novo assistente com as configurações desejadas, de acordo com os requisitos do projeto. (faça o upload dos arquivos .json também)
+  3. Ao finalizar a criação, copie o `ASSISTANT_ID` fornecido.
+
+- **Configuração do Código:**
+  1. Abra o arquivo `app/frontend/AI/main.py`.
+  2. Localize a variável `ASSISTANT_ID` e substitua o valor pelo `ASSISTANT_ID` copiado da plataforma da OpenAI.
+  
+  Exemplo:
+  ```python
+  ASSISTANT_ID = "seu_assistant_id_aqui"
+  ```
 
 #### **Prompt do Assistente de Vendas**
 
@@ -276,9 +288,15 @@ Este projeto inclui um pipeline para geração e inserção de dados fictícios 
 > Para cada solicitação, responda com um resumo direto e insights práticos, seguidos de recomendações detalhadas.  
 > A linguagem deve ser profissional, objetiva e prática, utilizando gráficos e visualizações sempre que possível para facilitar a compreensão dos dados.
 
---- 
+---
 
-### **6. Executar o Frontend**
+### **6. Abrir a Interface do Assistente AI no Streamlit**  
+   Para acessar a interface do assistente especializada em análise de vendas e insights:
+   ```bash
+   streamlit run app/frontend/AI/main.py
+   ```
+
+### **7. Executar o Frontend**
 
 Este projeto oferece uma interface visual desenvolvida em Streamlit, onde é possível visualizar e interagir com os dados carregados.
 
