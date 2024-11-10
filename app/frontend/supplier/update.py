@@ -18,7 +18,7 @@ def update():
 
     if search_update_supplier_bt:
         df = pd.DataFrame()
-        response = requests.get(f"http://backend:8000/suppliers/{update_id}")
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/suppliers/{update_id}")
         if response.status_code == 200:
             supplier = response.json()
             df = pd.DataFrame([supplier])
@@ -80,7 +80,7 @@ def update():
 
                 if supplier_updated:
                     response = requests.put(
-                            f"http://backend:8000/suppliers/{st.session_state['id_supplier_upd']}", json=supplier_updated
+                            f"{os.getenv('BACKEND_URL')}/suppliers/{st.session_state['id_supplier_upd']}", json=supplier_updated
                         )
                     
                     if response.status_code == 200:

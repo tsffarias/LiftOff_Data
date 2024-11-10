@@ -36,7 +36,7 @@ def read_sale():
             st.warning("Digite um valor para ser pesquisado!")
         else:
             if not input_disabled and search_field:
-                response = requests.get(f"http://backend:8000/sales/")
+                response = requests.get(f"{os.getenv('BACKEND_URL')}/sales/")
 
                 if response.status_code == 200:
                     sales = response.json()

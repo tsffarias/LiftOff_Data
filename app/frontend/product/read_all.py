@@ -11,7 +11,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def read_all():
     if st.button("Exibir Todos os Produtos"):
-        response = requests.get("http://backend:8000/products/")
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/products/")
         if response.status_code == 200:
             product = response.json()
             df = pd.DataFrame(product)

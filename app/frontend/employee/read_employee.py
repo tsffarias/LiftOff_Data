@@ -34,7 +34,7 @@ def read_employee():
             st.warning("Digite uma valor para ser pesquisado!")
         else:
             if not input_disabled and search_field:
-                response = requests.get(f"http://backend:8000/employees/")
+                response = requests.get(f"{os.getenv('BACKEND_URL')}/employees/")
 
                 if response.status_code == 200:
                     employee = response.json()

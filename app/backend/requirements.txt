@@ -11,3 +11,8 @@ faker
 pandas
 pyarrow
 boto3
+google-analytics-data
+google-auth
+google-auth-oauthlib
+google-api-core
+googleapis-common-protos

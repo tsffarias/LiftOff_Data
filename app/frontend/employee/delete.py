@@ -13,7 +13,7 @@ def delete():
 
     # Botão para consultar funcionário
     if st.button("Buscar Funcionário", key="search_employee_delete_button"):
-        response = requests.get(f"http://backend:8000/employees/{delete_id}")
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/employees/{delete_id}")
         if response.status_code == 200:
             employee = response.json()
             df = pd.DataFrame([employee])
@@ -47,7 +47,7 @@ def delete():
 
         # Botão para deletar funcionário
         if st.button("Deletar Funcionário"):
-            response = requests.delete(f"http://backend:8000/employees/{st.session_state['id_employee_del']}")
+            response = requests.delete(f"{os.getenv('BACKEND_URL')}/employees/{st.session_state['id_employee_del']}")
             if response.status_code == 200:
                 st.success("Funcionário deletado com sucesso!")
                 st.session_state.pop('df_employee_del')

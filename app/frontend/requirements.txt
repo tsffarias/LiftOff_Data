@@ -8,3 +8,5 @@ openai
 chromadb
 psycopg2-binary
 sqlalchemy
+duckdb
+plotly

@@ -14,7 +14,7 @@ def delete():
     
     # Botão para consultar Produto
     if st.button("Buscar Produto"):
-        response = requests.get(f"http://backend:8000/products/{delete_id}")
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/products/{delete_id}")
         if response.status_code == 200:
             product = response.json()
             df = pd.DataFrame([product])
@@ -49,7 +49,7 @@ def delete():
 
         # Botão para deletar Produto
         if st.button("Deletar Produto"):
-            response = requests.delete(f"http://backend:8000/products/{st.session_state['id_product_del']}")
+            response = requests.delete(f"{os.getenv('BACKEND_URL')}/products/{st.session_state['id_product_del']}")
             if response.status_code == 200:
                 st.success("Produto deletado com sucesso!")
                 st.session_state.pop('df_product_del')

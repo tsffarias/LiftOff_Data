@@ -36,7 +36,7 @@ def update():
 
             if update_data:
                 response = requests.put(
-                    f"http://backend:8000/sales/{update_id}", json=update_data
+                    f"{os.getenv('BACKEND_URL')}/sales/{update_id}", json=update_data
                 )
                 show_response_message(response)
             else:

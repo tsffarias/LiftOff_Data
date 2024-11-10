@@ -24,7 +24,7 @@ def create():
 
         if submit_button:
             response = requests.post(
-                "http://backend:8000/products/",
+                f"{os.getenv('BACKEND_URL')}/products/",
                 json={
                     "name": name,
                     "description": description,

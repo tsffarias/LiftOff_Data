@@ -17,7 +17,7 @@ def update():
 
     if search_update_product_bt:
         df = pd.DataFrame()
-        response = requests.get(f"http://backend:8000/products/{update_id}")
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/products/{update_id}")
         if response.status_code == 200:
             product = response.json()
             df = pd.DataFrame([product])
@@ -70,7 +70,7 @@ def update():
 
                 if product_updated:
                     response = requests.put(
-                            f"http://backend:8000/products/{st.session_state['id_product_upd']}", json=product_updated
+                            f"{os.getenv('BACKEND_URL')}/products/{st.session_state['id_product_upd']}", json=product_updated
                         )
                     
                     if response.status_code == 200:

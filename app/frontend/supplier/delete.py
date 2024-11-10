@@ -14,7 +14,7 @@ def delete():
     
     # Botão para consultar Fornecedor
     if st.button("Buscar Fornecedor"):
-        response = requests.get(f"http://backend:8000/suppliers/{delete_id}")
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/suppliers/{delete_id}")
         if response.status_code == 200:
             suppliers = response.json()
             df = pd.DataFrame([suppliers])
@@ -48,7 +48,7 @@ def delete():
 
         # Botão para deletar funcionário
         if st.button("Deletar Fornecedor"):
-            response = requests.delete(f"http://backend:8000/suppliers/{st.session_state['id_suppliers_del']}")
+            response = requests.delete(f"{os.getenv('BACKEND_URL')}/suppliers/{st.session_state['id_suppliers_del']}")
             if response.status_code == 200:
                 st.success("Fornecedor deletado com sucesso!")
                 st.session_state.pop('df_suppliers_del')

@@ -33,7 +33,7 @@ def read_supplier():
             st.warning("Digite uma valor para ser pesquisado!")
         else:
             if not input_disabled and search_field:
-                response = requests.get(f"http://backend:8000/suppliers/")
+                response = requests.get(f"{os.getenv('BACKEND_URL')}/suppliers/")
 
                 if response.status_code == 200:
                     supplier = response.json()

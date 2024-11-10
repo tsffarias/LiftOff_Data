@@ -16,7 +16,7 @@ def update():
 
     if search_update_employee_bt:
         df = pd.DataFrame()
-        response = requests.get(f"http://backend:8000/employees/{update_id}")
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/employees/{update_id}")
         if response.status_code == 200:
             employee = response.json()
             df = pd.DataFrame([employee])
@@ -124,7 +124,7 @@ def update():
 
                 if employee_updated:
                     response = requests.put(
-                            f"http://backend:8000/employees/{st.session_state['id_employee_upd']}", json=employee_updated
+                            f"{os.getenv('BACKEND_URL')}/employees/{st.session_state['id_employee_upd']}", json=employee_updated
                         )
                     
                     if response.status_code == 200:

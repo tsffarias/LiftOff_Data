@@ -12,7 +12,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def read_all():
     if st.button("Exibir Todos os Funcionários"):
-        response = requests.get("http://backend:8000/employees/")
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/employees/")
         if response.status_code == 200:
             employees = response.json()
             df = pd.DataFrame(employees)

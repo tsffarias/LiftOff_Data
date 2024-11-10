@@ -31,7 +31,7 @@ def create():
         submit_button = st.form_submit_button("Adicionar Funcionário")
 
         if submit_button:
-            response = requests.post("http://backend:8000/employees/", json={
+            response = requests.post(f"{os.getenv('BACKEND_URL')}/employees/", json={
                                     "first_name": first_name,
                                     "last_name": last_name,
                                     "email": email,

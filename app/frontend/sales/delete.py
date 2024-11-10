@@ -12,5 +12,5 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 def delete():
     delete_id = st.number_input("ID da Venda para Deletar", min_value=1, format="%d")
     if st.button("Deletar Venda"):
-        response = requests.delete(f"http://backend:8000/sales/{delete_id}")
+        response = requests.delete(f"{os.getenv('BACKEND_URL')}/sales/{delete_id}")
         show_response_message(response)

@@ -1,4 +1,10 @@
 import streamlit as st
+st.set_page_config(
+            page_title="LiftOff",
+            layout="wide",
+            initial_sidebar_state="expanded"
+)
+
 from streamlit_option_menu import option_menu
 import pandas as pd
 import requests
@@ -9,12 +15,9 @@ from employee import create as create_employee, delete as delete_employee, read_
 from product import create as create_product, delete as delete_product, read_all as read_all_product, read_product, update as update_product
 from sales import create as create_sale, delete as delete_sale, read_all as read_all_sales, read_sale, update as update_sale
 from supplier import create as create_supplier, delete as delete_supplier, read_all as read_all_supplier, read_supplier, update as update_supplier
+from dashboard import dashboard
 
-st.set_page_config(
-            page_title="LiftOff",
-            layout="wide",
-            initial_sidebar_state="expanded"
-)
+
 
 class Dashboard:
     def __init__(self):
@@ -31,8 +34,8 @@ class Dashboard:
 
         #Options Menu
         with st.sidebar:
-            selected = option_menu('LiftOff', ["Home", 'Funcionário', 'Fornecedor', 'Produto', 'Vendas', 'Sobre'], 
-                icons=['house', 'person-badge', 'truck', 'box', 'graph-up', 'info-circle'], menu_icon='intersect', default_index=0,
+            selected = option_menu('LiftOff', ["Home", 'Funcionário', 'Fornecedor', 'Produto', 'Vendas', 'Dashboard', 'Sobre'], 
+                icons=['house', 'person-badge', 'truck', 'box', 'graph-up', 'bar-chart', 'info-circle'], menu_icon='intersect', default_index=0,
                 styles={
                         "container": {"background-color": "#fafafa"},
                         "nav-link": {"--hover-color": "#eee"},
@@ -51,6 +54,8 @@ class Dashboard:
             self.product()
         elif selected=="Vendas":
             self.sales()
+        elif selected=='Dashboard':
+            self.dashboard()
         else:
             self.about() 
 
@@ -168,6 +173,9 @@ class Dashboard:
         with st.expander("Atualizar Fornecedor"):
             update_supplier()
 
+    def dashboard(self):
+        dashboard()
+    
     def sales(self):
         st.title("Gerenciamento de Vendas")
         

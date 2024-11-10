@@ -23,7 +23,7 @@ def create():
         if submit_button:
             data_hora = datetime.combine(data, hora)
             response = requests.post(
-                "http://backend:8000/sales/",
+                f"{os.getenv('BACKEND_URL')}/sales/",
                 json={
                     "email": email,
                     "data": data_hora.isoformat(),
