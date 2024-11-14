@@ -253,7 +253,7 @@ Este projeto inclui um pipeline para geração e inserção de dados fictícios 
    Para rodar o DBT (Data Build Tool) e transformar os dados, execute:
    ```bash
    cd app/backend/data_warehouse/
-   dbt run
+   dbt run # ou dbt --log-level debug run
    ```
 
 4. **Gerar Arquivos para o Assistente OpenAI**  
@@ -261,6 +261,7 @@ Este projeto inclui um pipeline para geração e inserção de dados fictícios 
    ```bash
    docker-compose exec frontend sh
    python AI/extract_data_json.py
+   python AI/create_assistent_exemplo.py
    ```
 
 5. **Criar o Assistente de IA na OpenAI**

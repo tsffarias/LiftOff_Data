@@ -7,30 +7,7 @@ from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
 import plotly.express as px
 import plotly.graph_objects as go
-
-# USAR PLOTLY NOS GRAFICOS
-
-# colocar filtro de data
-
-# Tabela sales
-# numero de produtos distinctos (card) - é o count distinct da coluna produto em sales
-# numero de receia total (card) - é a soma de valor em sales
-# numero de vendas total (card) - é count distinct do id da tabela de sales
-# numero de itens total (card) - é a soma de quantidade
-# grafico de vendas (grafico de linha por data)
-# vendas por produto (grafico de barras)
-# vendas por categoria (grafico de barras)
-# top 10 melhores vendedores por sua venda (grafico de barra com Email do Vendedor e valor na tabela sales)
-# vendas por segmentação de horario (café da manhã, aumoço, cafe da tarde e jantar)
-# vendas por dia da semana
-
-# tabela employee
-# numero quantidade de funcionarios (card) - é o count distinct da coluna employee_id da tabela employee)
-# grafico mensal da folha salarial dos funcionarios (grafico de barras) - é a soma da coluna salary pelo data mês da tabela employee
-# percentual de funcionarios homens e mulheres (grafico de pizza) - é o percentual da quantidade da coluna gender da tabela employee
-# média salarial por job_title (grafico de barras) - é a média da coluna salary pelo job_title da tabela employee
-# grafico de linhas com a quantidade de usuarios contratados por mês - é usado a coluna hire_date e o employee_id da tabela employee
-# tabela com os dados dos funcionarios em que o aniversaril é no mês atual
+from datetime import datetime
 
 # Carrega o arquivo .env usando um caminho relativo
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
@@ -82,7 +59,7 @@ def display_metrics(sales_df, employee_df):
             text-align: center;
             margin-bottom: 20px;
         }
-        .metric-container h3 {
+        .metric-container h4 {
             margin-bottom: 5px;
             font-weight: bold;
         }
@@ -119,12 +96,8 @@ def display_metrics(sales_df, employee_df):
 
 # Função para gerar e exibir gráficos
 def display_charts(sales_df, employee_df):
-    # Conversões de colunas para datetime se existirem
-    if 'data' in sales_df.columns:
-        sales_df['data'] = pd.to_datetime(sales_df['data'], errors='coerce')
-
-    if 'hire_date' in employee_df.columns:
-        employee_df['hire_date'] = pd.to_datetime(employee_df['hire_date'], errors='coerce')
+    # As datas já foram convertidas em 'dashboard()'
+    # Converter 'birth_date' se necessário
     if 'birth_date' in employee_df.columns:
         employee_df['birth_date'] = pd.to_datetime(employee_df['birth_date'], errors='coerce')
 
@@ -160,7 +133,34 @@ def display_charts(sales_df, employee_df):
             <p style="margin: 10px 0 0; color: #555;">Análise dos dados de funcionários</p>
         </div>
     """, unsafe_allow_html=True)
+    
+    # Conversão de colunas de data para datetime no employee_df
+    if 'hire_date' in employee_df.columns:
+        employee_df['hire_date'] = pd.to_datetime(employee_df['hire_date'], errors='coerce')
+        # Remover fuso horário se existir
+        employee_df['hire_date'] = employee_df['hire_date'].dt.tz_localize(None)
 
+        min_date_hire = employee_df['hire_date'].min().to_pydatetime()
+        max_date_hire = employee_df['hire_date'].max().to_pydatetime()
+
+        # Seletor de intervalo de datas para funcionários usando slider
+        st.header("Filtro de Data para Funcionários")
+        date_range_hire = st.slider(
+            "Selecione o intervalo de datas para funcionários (data de contratação):",
+            min_value=min_date_hire,
+            max_value=max_date_hire,
+            value=(min_date_hire, max_date_hire),
+            format="DD/MM/YYYY",
+            key='hire_date_range'
+        )
+
+        # Filtrar o DataFrame de funcionários com base no intervalo selecionado
+        if date_range_hire:
+            start_datetime_hire, end_datetime_hire = date_range_hire
+            employee_df = employee_df[(employee_df['hire_date'] >= start_datetime_hire) & (employee_df['hire_date'] <= end_datetime_hire)]
+    else:
+        st.warning("A coluna 'hire_date' não está presente nos dados de funcionários.")
+    
     # Gráfico de Folha Salarial Mensal
     if 'hire_date' in employee_df.columns:
         employee_df['mes'] = employee_df['hire_date'].dt.to_period('M').astype(str)
@@ -211,9 +211,37 @@ def dashboard():
     with ThreadPoolExecutor() as executor:
         results = executor.map(fetch_data, api_urls.values())
 
-    # Transformar dados em DataFrames e exibir tabelas de vendas e funcionários
-    sales_df = pd.DataFrame(next(results))
-    employee_df = pd.DataFrame(next(results))
+    # Transformar dados em DataFrames
+    sales_data = next(results)
+    employee_data = next(results)
+    sales_df = pd.DataFrame(sales_data)
+    employee_df = pd.DataFrame(employee_data)
+
+    # Conversão de colunas de data para datetime
+    if 'data' in sales_df.columns:
+        sales_df['data'] = pd.to_datetime(sales_df['data'], errors='coerce')
+        # Remover fuso horário das datas
+        sales_df['data'] = sales_df['data'].dt.tz_localize(None)
+
+        min_date_sales = sales_df['data'].min().to_pydatetime()
+        max_date_sales = sales_df['data'].max().to_pydatetime()
+
+        # Seletor de intervalo de datas para vendas usando slider
+        st.header("Filtro de Data para Vendas")
+        date_range_sales = st.slider(
+            "Selecione o intervalo de datas para vendas:",
+            min_value=min_date_sales,
+            max_value=max_date_sales,
+            value=(min_date_sales, max_date_sales),
+            format="DD/MM/YYYY"
+        )
+
+        # Filtrar o DataFrame de vendas com base no intervalo selecionado
+        if date_range_sales:
+            start_datetime_sales, end_datetime_sales = date_range_sales
+            sales_df = sales_df[(sales_df['data'] >= start_datetime_sales) & (sales_df['data'] <= end_datetime_sales)]
+    else:
+        st.warning("A coluna 'data' não está presente nos dados de vendas.")
 
     # Exibir métricas e gráficos
     display_metrics(sales_df, employee_df)
