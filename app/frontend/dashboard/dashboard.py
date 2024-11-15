@@ -97,15 +97,30 @@ def display_metrics(sales_df, employee_df):
 # Função para gerar e exibir gráficos
 def display_charts(sales_df, employee_df):
     # As datas já foram convertidas em 'dashboard()'
-    # Converter 'birth_date' se necessário
+    # Converter 'birth_date' e 'hire_date' se necessário
     if 'birth_date' in employee_df.columns:
         employee_df['birth_date'] = pd.to_datetime(employee_df['birth_date'], errors='coerce')
+
+    if 'hire_date' in employee_df.columns:
+        # Garantir que 'hire_date' esteja no formato datetime
+        employee_df['hire_date'] = pd.to_datetime(employee_df['hire_date'], errors='coerce')
+        # Remover fuso horário se existir
+        employee_df['hire_date'] = employee_df['hire_date'].dt.tz_localize(None)
 
     # Gráfico de Vendas por Data
     if 'data' in sales_df.columns:
         sales_by_date = sales_df.groupby(sales_df['data'].dt.date)['valor'].sum().reset_index()
-        fig_sales_date = px.line(sales_by_date, x='data', y='valor', title="Vendas ao Longo do Tempo")
+        # Transformar em gráfico de área
+        fig_sales_date = px.area(sales_by_date, x='data', y='valor', title="Vendas ao Longo do Tempo")
+        # Calcular a média
+        media_vendas = sales_by_date['valor'].mean()
+        # Adicionar linha de média vermelha
+        fig_sales_date.add_hline(y=media_vendas, line_dash="dash", line_color="red",
+                                 annotation_text=f"Média: R$ {media_vendas:,.2f}", 
+                                 annotation_position="top left")
         st.plotly_chart(fig_sales_date)
+    else:
+        st.warning("A coluna 'data' não está presente nos dados de vendas.")
 
     # Gráfico de Vendas por Produto
     sales_by_product = sales_df.groupby('produto')['valor'].sum().reset_index()
@@ -133,7 +148,7 @@ def display_charts(sales_df, employee_df):
             <p style="margin: 10px 0 0; color: #555;">Análise dos dados de funcionários</p>
         </div>
     """, unsafe_allow_html=True)
-    
+
     # Conversão de colunas de data para datetime no employee_df
     if 'hire_date' in employee_df.columns:
         employee_df['hire_date'] = pd.to_datetime(employee_df['hire_date'], errors='coerce')
@@ -163,9 +178,19 @@ def display_charts(sales_df, employee_df):
     
     # Gráfico de Folha Salarial Mensal
     if 'hire_date' in employee_df.columns:
+        # Garantir que 'hire_date' esteja no formato datetime
+        employee_df['hire_date'] = pd.to_datetime(employee_df['hire_date'], errors='coerce')
+        # Remover fuso horário se existir
+        employee_df['hire_date'] = employee_df['hire_date'].dt.tz_localize(None)
         employee_df['mes'] = employee_df['hire_date'].dt.to_period('M').astype(str)
         folha_mensal = employee_df.groupby('mes')['salary'].sum().reset_index()
         fig_folha_mensal = px.bar(folha_mensal, x='mes', y='salary', title="Folha Salarial Mensal")
+        # Calcular a média
+        media_folha = folha_mensal['salary'].mean()
+        # Adicionar linha de média vermelha
+        fig_folha_mensal.add_hline(y=media_folha, line_dash="dash", line_color="red",
+                                   annotation_text=f"Média: R$ {media_folha:,.2f}",
+                                   annotation_position="top left")
         st.plotly_chart(fig_folha_mensal)
 
     # Gráfico de Percentual de Gênero
