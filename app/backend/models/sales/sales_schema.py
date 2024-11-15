@@ -26,14 +26,16 @@ class SalesBase(BaseModel):
     data: datetime
     valor: PositiveFloat
     quantidade: PositiveInt
-    produto: ProdutoEnum
+    produto: str
 
+    '''
     @field_validator("produto", mode="before")
     @classmethod
     def check_categoria(cls, v):
         if v in [item.value for item in ProdutoEnum]:
             return v
         raise ValueError("Produto inválido")
+    '''
     
 class SalesCreate(SalesBase):
     pass
