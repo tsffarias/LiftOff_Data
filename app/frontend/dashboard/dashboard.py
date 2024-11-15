@@ -178,20 +178,75 @@ def display_charts(sales_df, employee_df):
     
     # Gráfico de Folha Salarial Mensal
     if 'hire_date' in employee_df.columns:
-        # Garantir que 'hire_date' esteja no formato datetime
+        # Cálculo da folha salarial mensal considerando todos os funcionários
+        # O código permanece o mesmo que ajustamos anteriormente
+        # Garantir que 'hire_date' e 'termination_date' estejam no formato datetime
         employee_df['hire_date'] = pd.to_datetime(employee_df['hire_date'], errors='coerce')
+        employee_df['termination_date'] = pd.to_datetime(employee_df['termination_date'], errors='coerce')
         # Remover fuso horário se existir
         employee_df['hire_date'] = employee_df['hire_date'].dt.tz_localize(None)
-        employee_df['mes'] = employee_df['hire_date'].dt.to_period('M').astype(str)
-        folha_mensal = employee_df.groupby('mes')['salary'].sum().reset_index()
-        fig_folha_mensal = px.bar(folha_mensal, x='mes', y='salary', title="Folha Salarial Mensal")
+        employee_df['termination_date'] = employee_df['termination_date'].dt.tz_localize(None)
+        
+        # Remover registros com 'hire_date' nulo
+        employee_df = employee_df[employee_df['hire_date'].notnull()]
+        
+        # Remover duplicatas
+        employee_df = employee_df.drop_duplicates(subset='employee_id')
+        
+        # Converter 'salary' para numérico
+        employee_df['salary'] = pd.to_numeric(employee_df['salary'], errors='coerce')
+        
+        # Remover registros com 'salary' nulo ou negativo
+        employee_df = employee_df[employee_df['salary'] > 0]
+        
+        # Criar DataFrame auxiliar para armazenar os resultados
+        folha_mensal_df = pd.DataFrame()
+        
+        # Gerar o intervalo de meses desde a primeira contratação até o mês atual
+        start_month = employee_df['hire_date'].min().to_period('M')
+        end_month = pd.Timestamp.today().to_period('M')
+        
+        # Gerar todos os meses no intervalo
+        all_months = pd.period_range(start=start_month, end=end_month, freq='M')
+        
+        # Lista para armazenar os resultados
+        folha_mensal = []
+        
+        for month in all_months:
+            # Definir o início e fim do mês
+            start_of_month = month.to_timestamp()
+            end_of_month = month.to_timestamp(how='end')
+            
+            # Filtrar funcionários ativos no mês
+            active_employees = employee_df[
+                (employee_df['hire_date'] <= end_of_month) &
+                ((employee_df['termination_date'].isna()) | (employee_df['termination_date'] >= start_of_month))
+            ]
+            
+            # Somar os salários mensais dos funcionários ativos
+            total_salary = active_employees['salary'].sum()
+            folha_mensal.append({'mes': str(month), 'salary': total_salary})
+        
+        folha_mensal_df = pd.DataFrame(folha_mensal)
+        
+        # Converter 'mes' para datetime para ordenar corretamente
+        folha_mensal_df['mes'] = pd.to_datetime(folha_mensal_df['mes'])
+        
+        # Ordenar por mês
+        folha_mensal_df = folha_mensal_df.sort_values('mes')
+        
+        # Criar o gráfico
+        fig_folha_mensal = px.bar(folha_mensal_df, x='mes', y='salary', title="Folha Salarial Mensal")
         # Calcular a média
-        media_folha = folha_mensal['salary'].mean()
+        media_folha = folha_mensal_df['salary'].mean()
         # Adicionar linha de média vermelha
         fig_folha_mensal.add_hline(y=media_folha, line_dash="dash", line_color="red",
                                    annotation_text=f"Média: R$ {media_folha:,.2f}",
                                    annotation_position="top left")
         st.plotly_chart(fig_folha_mensal)
+    else:
+        st.warning("A coluna 'hire_date' não está presente nos dados de funcionários.")
+
 
     # Gráfico de Percentual de Gênero
     genero_percent = employee_df['gender'].value_counts(normalize=True) * 100
