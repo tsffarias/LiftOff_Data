@@ -12,7 +12,7 @@ def update():
 
     update_id = str(st.number_input("Digite o id do Produto:", min_value=1, format="%d"))
 
-    # Botão para consultar cliente
+    # Botão para consultar produto
     search_update_product_bt = st.button("Buscar Produto", key="search_product_update_button")
 
     if search_update_product_bt:

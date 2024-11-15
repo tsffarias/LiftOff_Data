@@ -1,43 +1,99 @@
 import streamlit as st
 import pandas as pd
 import requests
-from datetime import datetime, time, date
 import os
 from dotenv import load_dotenv
-from utils import show_response_message
+from datetime import datetime, time, timezone
 
 # Carrega o arquivo .env usando um caminho relativo
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def update():
-    with st.form("update_sale"):
-        update_id = st.number_input("ID da Venda", min_value=1, format="%d")
-        new_email = st.text_input("Novo Email do Vendedor")
-        new_data = st.date_input("Nova Data da compra")
-        new_hora = st.time_input("Nova Hora da compra")
-        new_valor = st.number_input("Novo Valor da venda", min_value=0.0, format="%.2f")
-        new_quantidade = st.number_input("Nova Quantidade de produtos", min_value=1, step=1)
-        new_produto = st.selectbox("Novo Produto", options=["ZapFlow com Gemini", "ZapFlow com chatGPT", "ZapFlow com Llama3.0"])
+    update_id = str(st.number_input("Digite o id da Venda:", min_value=1, format="%d"))
 
-        update_button = st.form_submit_button("Atualizar Venda")
+    # Botão para consultar venda
+    search_update_sale_bt = st.button("Buscar Venda", key="search_sale_update_button")
 
-        if update_button:
-            update_data = {}
-            if new_email:
-                update_data["email"] = new_email
-            if new_data and new_hora:
-                update_data["data"] = datetime.combine(new_data, new_hora).isoformat()
-            if new_valor > 0:
-                update_data["valor"] = new_valor
-            if new_quantidade > 0:
-                update_data["quantidade"] = new_quantidade
-            if new_produto:
-                update_data["produto"] = new_produto
+    if search_update_sale_bt:
+        df = pd.DataFrame()
+        response = requests.get(f"{os.getenv('BACKEND_URL')}/sales/{update_id}")
+        if response.status_code == 200:
+            sales = response.json()
+            df = pd.DataFrame([sales])
 
-            if update_data:
-                response = requests.put(
-                    f"{os.getenv('BACKEND_URL')}/sales/{update_id}", json=update_data
-                )
-                show_response_message(response)
-            else:
-                st.error("Nenhuma informação fornecida para atualização")
+            # Seleciona as colunas desejadas
+            df = df[
+                [
+                    "id",
+                    "email",
+                    "produto",
+                    "valor",
+                    "quantidade",
+                    "data"
+                ]
+            ]
+
+            df['data'] = pd.to_datetime(df['data'])
+
+        else:
+            st.warning("Venda não encontrada!")
+
+        if not df.empty:
+            st.session_state['df_sales_upd'] = df
+            st.session_state['id_sales_upd'] = update_id
+
+    # Verifica se a venda foi encontrada e exibe as informações
+    if 'df_sales_upd' in st.session_state:
+        with st.form("update_sales"):
+            col1, col2 = st.columns([2, 3])
+
+            with col1:
+                new_email = st.text_input("Novo Email do Vendedor", value=st.session_state["df_sales_upd"].at[0, "email"], disabled=False, key="input_email_sales")
+                new_valor = st.number_input("Novo Valor da venda", min_value=0.01, format="%.2f", value=st.session_state["df_sales_upd"].at[0, "valor"], disabled=False, key="input_price_sale")
+                new_quantidade = st.number_input("Nova Quantidade de produtos", min_value=1, step=1, value=st.session_state["df_sales_upd"].at[0, "quantidade"], disabled=False, key="input_quantidade_sale")
+
+            with col2:
+                new_product = st.text_input("Novo Nome do Produto", value=st.session_state["df_sales_upd"].at[0, "produto"], disabled=False, key="input_name_product")
+                 # Extrai a data e hora da coluna 'data'
+                current_data = st.session_state["df_sales_upd"].at[0, "data"].date()
+                current_hora = st.session_state["df_sales_upd"].at[0, "data"].time()
+
+                # Preenche os campos com os valores extraídos
+                new_data = st.date_input("Nova Data da compra", value=current_data, disabled=False, key="input_sale_date")
+                new_hora = st.time_input("Nova Hora da compra", value=current_hora, disabled=False, key="input_sale_hour")
+               
+            update_sale_bt = st.form_submit_button("Atualizar Venda")
+
+            if update_sale_bt:
+                update_sale = {}
+                update_sale["email"] = new_email
+                update_sale["produto"] = new_product
+                update_sale["valor"] = new_valor
+                update_sale["quantidade"] = new_quantidade
+                
+                if new_data is not None and new_hora is not None:
+                    # Combina data e hora
+                    combined_datetime = datetime.combine(new_data, new_hora)
+
+                    # Adiciona microsegundos manualmente
+                    combined_datetime = combined_datetime.replace(microsecond=datetime.now().microsecond)
+
+                    # Torna o objeto datetime ciente do fuso horário UTC
+                    combined_datetime = combined_datetime.replace(tzinfo=timezone.utc)
+
+                    # Converte para ISO 8601 com microsegundos e adiciona 'Z' no final
+                    update_sale["data"] = combined_datetime.isoformat(timespec='microseconds').replace('+00:00', 'Z')
+                else:
+                    update_sale["data"] = None                   
+
+                if update_sale:
+                    response = requests.put(
+                            f"{os.getenv('BACKEND_URL')}/sales/{st.session_state['id_sales_upd']}", json=update_sale
+                        )
+                    
+                    if response.status_code == 200:
+                        st.success("Venda atualizada com sucesso!")
+                        del st.session_state['df_sales_upd']
+                        del st.session_state['id_sales_upd']
+                    else:
+                        st.error("Erro ao atualizar Venda.")
