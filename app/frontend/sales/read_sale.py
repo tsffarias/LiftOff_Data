@@ -53,7 +53,7 @@ def read_sale():
                         df_sales = df[df['id'].astype(str).str.contains(search_field, case=False, na=False)]
                                                         
                     if not df_sales.empty:
-                        st.dataframe(df_sales, hide_index=True, width=None)
+                        st.dataframe(df_sales, hide_index=True, use_container_width=True)
                     else:
                         st.warning("Nenhuma Venda encontrada!")
                 else:

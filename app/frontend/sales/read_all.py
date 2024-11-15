@@ -15,6 +15,6 @@ def read_all():
         if response.status_code == 200:
             sales = response.json()
             df = pd.DataFrame(sales)
-            st.dataframe(df, hide_index=True, width=None)
+            st.dataframe(df, hide_index=True, use_container_width=True)
         else:
             show_response_message(response)

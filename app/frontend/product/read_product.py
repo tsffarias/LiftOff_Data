@@ -48,7 +48,7 @@ def read_product():
                         df_product = df[df['id'].astype(str).str.contains(search_field, case=False, na=False)]
                                                         
                     if not df_product.empty:
-                        st.dataframe(df_product, hide_index=True, width=None)
+                        st.dataframe(df_product, hide_index=True, use_container_width=True)
                     else:
                         st.warning("Nenhum Produto encontrado!")
                 else:

@@ -27,6 +27,6 @@ def read_all():
             ])]
 
             # Exibe o DataFrame sem o índice
-            st.dataframe(df, hide_index=True, width=None)
+            st.dataframe(df, hide_index=True, use_container_width=True)
         else:
             show_response_message(response)

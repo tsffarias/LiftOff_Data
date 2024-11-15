@@ -47,7 +47,7 @@ def read_supplier():
                         df_supplier = df[df['supplier_id'].astype(str).str.contains(search_field, case=False, na=False)]
                                                         
                     if not df_supplier.empty:
-                        st.dataframe(df_supplier, hide_index=True, width=None)
+                        st.dataframe(df_supplier, hide_index=True, use_container_width=True)
                     else:
                         st.warning("Nenhum Fornecedor encontrado!")
                 else:

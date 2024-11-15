@@ -52,7 +52,7 @@ def read_employee():
                         df_employee = df[df['employee_id'].astype(str).str.contains(search_field, case=False, na=False)]
                                                     
                     if not df_employee.empty:
-                        st.dataframe(df_employee, hide_index=True, width=None)
+                        st.dataframe(df_employee, hide_index=True, use_container_width=True)
                     else:
                         st.warning("Nenhum Funcionário encontrado!")
                 else:
