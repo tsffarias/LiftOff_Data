@@ -54,6 +54,7 @@ class SalesUpdate(BaseModel):
     quantidade: Optional[PositiveInt] = None
     produto: Optional[str] = None
 
+    '''
     @field_validator("produto", mode='before')
     def check_categoria(cls, v):
         if v is None:
@@ -61,3 +62,4 @@ class SalesUpdate(BaseModel):
         if v in [item.value for item in ProdutoEnum]:
             return v
         raise ValueError("Produto inválido")
+   '''
