@@ -29,6 +29,27 @@ Além do pipeline de dados, o projeto inclui uma interface de assistente AI no S
 <img src = "./img/top3_vendedores.png">
 </p>
 
+#### **Dashboard Interativo**
+
+Como parte da solução, desenvolvemos um **dashboard interativo** utilizando o Streamlit, que permite visualizar e analisar os dados de vendas e recursos humanos de forma intuitiva e eficiente. O dashboard apresenta métricas-chave, gráficos interativos e tabelas informativas, facilitando a tomada de decisões baseadas em dados.
+
+**Principais funcionalidades do dashboard:**
+
+- **Vendas ao Longo do Tempo:** Gráfico que mostra a evolução das vendas, ajudando a identificar tendências e sazonalidades.
+- **Vendas por Produto:** Análise dos produtos mais vendidos, destacando quais geram mais receita.
+- **Top 10 Melhores Vendedores:** Ranking dos vendedores com maior volume de vendas, reconhecendo a performance individual.
+- **Folha Salarial Mensal:** Acompanhamento dos custos mensais com salários, monitorando a evolução da folha de pagamento.
+- **Distribuição de Funcionários por Gênero:** Visualização da composição da equipe, promovendo insights sobre diversidade.
+- **Média Salarial por Cargo:** Comparação das remunerações médias entre diferentes posições na empresa.
+- **Contratações por Mês:** Gráfico que evidencia o ritmo de crescimento da equipe ao longo do tempo.
+- **Aniversariantes do Mês:** Lista dos funcionários que fazem aniversário no mês atual, fortalecendo o engajamento interno.
+
+<p align="center">
+<img src = "./img/dashboard.png">
+</p>
+
+O dashboard foi projetado para ser acessível e fácil de usar, permitindo que membros da equipe sem conhecimento técnico aprofundado possam explorar e interpretar os dados disponíveis.
+
 ### **Sequence Diagram**
 
 O diagrama abaixo ilustra a interação entre as principais camadas e componentes da arquitetura, desde a ingestão dos dados brutos até sua transformação e disponibilização para análise.

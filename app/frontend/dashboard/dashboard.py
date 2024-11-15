@@ -96,8 +96,6 @@ def display_metrics(sales_df, employee_df):
 
 # Função para gerar e exibir gráficos
 def display_charts(sales_df, employee_df):
-    # As datas já foram convertidas em 'dashboard()'
-    # Converter 'birth_date' e 'hire_date' se necessário
     if 'birth_date' in employee_df.columns:
         employee_df['birth_date'] = pd.to_datetime(employee_df['birth_date'], errors='coerce')
 
@@ -111,25 +109,31 @@ def display_charts(sales_df, employee_df):
     if 'data' in sales_df.columns:
         sales_by_date = sales_df.groupby(sales_df['data'].dt.date)['valor'].sum().reset_index()
         # Transformar em gráfico de área
-        fig_sales_date = px.area(sales_by_date, x='data', y='valor', title="Vendas ao Longo do Tempo")
+        fig_sales_date = px.area(sales_by_date, x='data', y='valor')
         # Calcular a média
         media_vendas = sales_by_date['valor'].mean()
         # Adicionar linha de média vermelha
         fig_sales_date.add_hline(y=media_vendas, line_dash="dash", line_color="red",
                                  annotation_text=f"Média: R$ {media_vendas:,.2f}", 
                                  annotation_position="top left")
+        st.subheader("Vendas ao Longo do Tempo")
+        st.write("Este gráfico mostra a evolução das vendas ao longo do tempo, permitindo identificar tendências e sazonalidades.")
         st.plotly_chart(fig_sales_date)
     else:
         st.warning("A coluna 'data' não está presente nos dados de vendas.")
 
     # Gráfico de Vendas por Produto
     sales_by_product = sales_df.groupby('produto')['valor'].sum().reset_index()
-    fig_sales_product = px.bar(sales_by_product, x='produto', y='valor', title="Vendas por Produto")
+    fig_sales_product = px.bar(sales_by_product, x='produto', y='valor')
+    st.subheader("Vendas por Produto")
+    st.write("Este gráfico apresenta o total de vendas por produto, destacando quais produtos geraram mais receita.")
     st.plotly_chart(fig_sales_product)
 
     # Top 10 Melhores Vendedores
     top_vendedores = sales_df.groupby('email')['valor'].sum().nlargest(10).reset_index()
-    fig_top_vendedores = px.bar(top_vendedores, x='email', y='valor', title="Top 10 Melhores Vendedores")
+    fig_top_vendedores = px.bar(top_vendedores, x='email', y='valor')
+    st.subheader("Top 10 Melhores Vendedores")
+    st.write("Este gráfico mostra os 10 vendedores com maior volume de vendas, reconhecendo a performance individual.")
     st.plotly_chart(fig_top_vendedores)
 
     # Card divisório para separar as seções
@@ -179,8 +183,6 @@ def display_charts(sales_df, employee_df):
     # Gráfico de Folha Salarial Mensal
     if 'hire_date' in employee_df.columns:
         # Cálculo da folha salarial mensal considerando todos os funcionários
-        # O código permanece o mesmo que ajustamos anteriormente
-        # Garantir que 'hire_date' e 'termination_date' estejam no formato datetime
         employee_df['hire_date'] = pd.to_datetime(employee_df['hire_date'], errors='coerce')
         employee_df['termination_date'] = pd.to_datetime(employee_df['termination_date'], errors='coerce')
         # Remover fuso horário se existir
@@ -236,41 +238,64 @@ def display_charts(sales_df, employee_df):
         folha_mensal_df = folha_mensal_df.sort_values('mes')
         
         # Criar o gráfico
-        fig_folha_mensal = px.bar(folha_mensal_df, x='mes', y='salary', title="Folha Salarial Mensal")
+        fig_folha_mensal = px.bar(folha_mensal_df, x='mes', y='salary')
         # Calcular a média
         media_folha = folha_mensal_df['salary'].mean()
         # Adicionar linha de média vermelha
         fig_folha_mensal.add_hline(y=media_folha, line_dash="dash", line_color="red",
                                    annotation_text=f"Média: R$ {media_folha:,.2f}",
                                    annotation_position="top left")
+        st.subheader("Folha Salarial Mensal")
+        st.write("Este gráfico apresenta o total mensal da folha salarial, indicando os custos com pessoal ao longo do tempo.")
         st.plotly_chart(fig_folha_mensal)
     else:
         st.warning("A coluna 'hire_date' não está presente nos dados de funcionários.")
 
-
-    # Gráfico de Percentual de Gênero
+    # Gráfico de Percentual de Funcionários por Gênero
     genero_percent = employee_df['gender'].value_counts(normalize=True) * 100
-    fig_genero = px.pie(values=genero_percent, names=genero_percent.index, title="Percentual de Funcionários por Gênero")
+    fig_genero = px.pie(values=genero_percent, names=genero_percent.index)
+    st.subheader("Percentual de Funcionários por Gênero")
+    st.write("Este gráfico ilustra a distribuição percentual de funcionários por gênero na empresa.")
     st.plotly_chart(fig_genero)
 
     # Média Salarial por Cargo
     salario_por_cargo = employee_df.groupby('job_title')['salary'].mean().reset_index()
-    fig_salario_cargo = px.bar(salario_por_cargo, x='job_title', y='salary', title="Média Salarial por Cargo")
+    fig_salario_cargo = px.bar(salario_por_cargo, x='job_title', y='salary')
+    st.subheader("Média Salarial por Cargo")
+    st.write("Este gráfico mostra a média salarial para cada cargo, permitindo comparar remunerações entre posições.")
     st.plotly_chart(fig_salario_cargo)
 
     # Gráfico de Contratações por Mês
     if 'hire_date' in employee_df.columns:
         employee_df['hire_mes'] = employee_df['hire_date'].dt.to_period('M').astype(str)
         contratacoes_mes = employee_df.groupby('hire_mes')['employee_id'].count().reset_index()
-        fig_contratacoes = px.line(contratacoes_mes, x='hire_mes', y='employee_id', title="Contratações por Mês")
+
+        # Converter 'hire_mes' para datetime para ordenar corretamente
+        contratacoes_mes['hire_mes'] = pd.to_datetime(contratacoes_mes['hire_mes'])
+
+        # Transformar em gráfico de área
+        fig_contratacoes = px.area(contratacoes_mes, x='hire_mes', y='employee_id')
+        # Calcular a média
+        media_contratacoes = contratacoes_mes['employee_id'].mean()
+        # Adicionar linha de média vermelha
+        fig_contratacoes.add_hline(y=media_contratacoes, line_dash="dash", line_color="red",
+                                   annotation_text=f"Média: {media_contratacoes:.2f}",
+                                   annotation_position="top left")
+        st.subheader("Contratações por Mês")
+        st.write("Este gráfico mostra o número de funcionários contratados a cada mês, indicando o ritmo de crescimento da equipe.")
         st.plotly_chart(fig_contratacoes)
+    else:
+        st.warning("A coluna 'hire_date' não está presente nos dados de funcionários")
 
     # Tabela com aniversariantes do mês atual
     if 'birth_date' in employee_df.columns:
         current_month = pd.to_datetime("today").month
         aniversariantes = employee_df[employee_df['birth_date'].dt.month == current_month]
         st.header("Aniversariantes do Mês")
+        st.write("Esta tabela lista os funcionários que fazem aniversário no mês atual.")
         st.dataframe(aniversariantes[['first_name', 'last_name', 'email', 'birth_date']], use_container_width=True)
+    else:
+        st.warning("A coluna 'birth_date' não está presente nos dados de funcionários.")
 
 
 # Função principal do dashboard
