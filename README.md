@@ -106,6 +106,10 @@ graph TD
 - **Descrição:** Streamlit é uma biblioteca Python de código aberto que permite a criação de aplicativos web interativos de forma rápida e fácil. Utilizado principalmente para construir dashboards e interfaces de dados, o Streamlit é ideal para prototipagem rápida e visualização de dados sem a necessidade de conhecimentos avançados em desenvolvimento web.
 - **Uso no Projeto:** Utilizado para construir o frontend da aplicação, permitindo que os usuários insiram dados de vendas, fornecedores, funcionários e produtos de forma interativa e visualizem os resultados diretamente na interface, por meio de um dashboard.
 
+<p align="center">
+  <img src = "./img/crud_vendas.png">
+</p>
+
 #### **Pydantic**
 
 - **Descrição:** Pydantic é uma biblioteca de validação de dados que utiliza modelos baseados em classes Python para garantir que os dados inseridos estejam no formato correto. É amplamente utilizada para validação e serialização de dados, garantindo integridade e consistência.
