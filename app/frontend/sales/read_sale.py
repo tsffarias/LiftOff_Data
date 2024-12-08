@@ -40,6 +40,10 @@ def read_sale():
 
                 if response.status_code == 200:
                     sales = response.json()
+                    # Verifica se o JSON está vazio
+                    if not sales:
+                        st.warning("⚠️ Nenhuma Venda encontrada!")
+                        return
                     df = pd.DataFrame(sales)
                     
                     if select_search == "Email":

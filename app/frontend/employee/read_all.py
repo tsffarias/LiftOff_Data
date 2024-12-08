@@ -15,6 +15,11 @@ def read_all():
         response = requests.get(f"{os.getenv('BACKEND_URL')}/employees/")
         if response.status_code == 200:
             employees = response.json()
+            # Verifica se o JSON está vazio
+            if not employees:
+                st.warning("⚠️ Nenhum Funcionário encontrado!")
+                return
+            
             df = pd.DataFrame(employees)
             st.dataframe(df, hide_index=True, use_container_width=True)
         else:

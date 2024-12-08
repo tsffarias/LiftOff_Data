@@ -17,6 +17,11 @@ def delete():
         response = requests.get(f"{os.getenv('BACKEND_URL')}/sales/{delete_id}")
         if response.status_code == 200:
             sales = response.json()
+            # Verifica se o JSON está vazio
+            if not sales:
+                st.warning("⚠️ Nenhuma Venda encontrada!")
+                return
+            
             df = pd.DataFrame([sales])
 
             # Seleciona as colunas desejadas

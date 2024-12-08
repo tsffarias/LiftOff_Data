@@ -38,6 +38,11 @@ def read_employee():
 
                 if response.status_code == 200:
                     employee = response.json()
+                    # Verifica se o JSON está vazio
+                    if not employee:
+                        st.warning("⚠️ Nenhum Funcionário encontrado!")
+                        return
+            
                     df = pd.DataFrame(employee)
                     
                     if select_search == "Nome":

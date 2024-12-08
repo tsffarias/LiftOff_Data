@@ -37,6 +37,11 @@ def read_supplier():
 
                 if response.status_code == 200:
                     supplier = response.json()
+                    # Verifica se o JSON está vazio
+                    if not supplier:
+                        st.warning("⚠️ Nenhum Fornecedor encontrado!")
+                        return
+                    
                     df = pd.DataFrame(supplier)
                     
                     if select_search == "Nome Empresa":

@@ -36,6 +36,11 @@ def read_product():
 
                 if response.status_code == 200:
                     product = response.json()
+                    # Verifica se o JSON está vazio
+                    if not product:
+                        st.warning("⚠️ Nenhum produto encontrado!")
+                        return
+            
                     df = pd.DataFrame(product)
                     
                     if select_search == "Nome":

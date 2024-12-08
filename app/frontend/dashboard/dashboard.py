@@ -40,12 +40,40 @@ def show_table_from_data(data, table_name):
 
 # Função para exibir métricas
 def display_metrics(sales_df, employee_df):
-    # KPIs
-    num_produtos = sales_df['produto'].nunique()
-    receita_total = sales_df['valor'].sum()
-    num_vendas = sales_df['id'].nunique()
-    total_itens = sales_df['quantidade'].sum()
-    num_funcionarios = employee_df['employee_id'].nunique()
+    # Verifica se a coluna 'produto' está presente
+    if 'produto' in sales_df.columns:
+        num_produtos = sales_df['produto'].nunique()
+    else:
+        num_produtos = 0
+        st.warning("⚠️ Coluna 'produto' ausente no DataFrame de vendas.")
+
+    # Verifica se a coluna 'valor' está presente
+    if 'valor' in sales_df.columns:
+        receita_total = sales_df['valor'].sum()
+    else:
+        receita_total = 0.0
+        st.warning("⚠️ Coluna 'valor' ausente no DataFrame de vendas.")
+
+    # Verifica se a coluna 'id' está presente
+    if 'id' in sales_df.columns:
+        num_vendas = sales_df['id'].nunique()
+    else:
+        num_vendas = 0
+        st.warning("⚠️ Coluna 'id' ausente no DataFrame de vendas.")
+
+    # Verifica se a coluna 'quantidade' está presente
+    if 'quantidade' in sales_df.columns:
+        total_itens = sales_df['quantidade'].sum()
+    else:
+        total_itens = 0
+        st.warning("⚠️ Coluna 'quantidade' ausente no DataFrame de vendas.")
+
+    # Verifica se a coluna 'employee_id' está presente no employee_df
+    if 'employee_id' in employee_df.columns:
+        num_funcionarios = employee_df['employee_id'].nunique()
+    else:
+        num_funcionarios = 0
+        st.warning("⚠️ Coluna 'employee_id' ausente no DataFrame de funcionários.")
 
     # CSS para criar estilo de "card"
     st.markdown("""

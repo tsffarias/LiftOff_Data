@@ -13,6 +13,11 @@ def read_all():
         response = requests.get(f"{os.getenv('BACKEND_URL')}/suppliers/")
         if response.status_code == 200:
             suppliers = response.json()
+            # Verifica se o JSON está vazio
+            if not suppliers:
+                st.warning("⚠️ Nenhum Fornecedor encontrado!")
+                return
+            
             df = pd.DataFrame(suppliers)
             st.dataframe(df, hide_index=True, use_container_width=True)
         else:

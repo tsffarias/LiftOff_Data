@@ -20,6 +20,11 @@ def update():
         response = requests.get(f"{os.getenv('BACKEND_URL')}/products/{update_id}")
         if response.status_code == 200:
             product = response.json()
+            # Verifica se o JSON está vazio
+            if not product:
+                st.warning("⚠️ Nenhum produto encontrado!")
+                return
+            
             df = pd.DataFrame([product])
 
             df = df[

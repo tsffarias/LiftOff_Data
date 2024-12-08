@@ -14,6 +14,11 @@ def read_all():
         response = requests.get(f"{os.getenv('BACKEND_URL')}/sales/")
         if response.status_code == 200:
             sales = response.json()
+            # Verifica se o JSON está vazio
+            if not sales:
+                st.warning("⚠️ Nenhuma Venda encontrada!")
+                return
+            
             df = pd.DataFrame(sales)
             st.dataframe(df, hide_index=True, use_container_width=True)
         else:

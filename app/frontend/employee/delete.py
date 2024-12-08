@@ -16,6 +16,11 @@ def delete():
         response = requests.get(f"{os.getenv('BACKEND_URL')}/employees/{delete_id}")
         if response.status_code == 200:
             employee = response.json()
+            # Verifica se o JSON está vazio
+            if not employee:
+                st.warning("⚠️ Nenhum Funcionário encontrado!")
+                return
+            
             df = pd.DataFrame([employee])
 
             # Seleciona as colunas desejadas

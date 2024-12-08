@@ -17,6 +17,11 @@ def delete():
         response = requests.get(f"{os.getenv('BACKEND_URL')}/products/{delete_id}")
         if response.status_code == 200:
             product = response.json()
+            # Verifica se o JSON está vazio
+            if not product:
+                st.warning("⚠️ Nenhum produto encontrado!")
+                return
+            
             df = pd.DataFrame([product])
 
             # Seleciona as colunas desejadas

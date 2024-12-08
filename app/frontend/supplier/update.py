@@ -21,6 +21,11 @@ def update():
         response = requests.get(f"{os.getenv('BACKEND_URL')}/suppliers/{update_id}")
         if response.status_code == 200:
             supplier = response.json()
+            # Verifica se o JSON está vazio
+            if not supplier:
+                st.warning("⚠️ Nenhum Fornecedor encontrado!")
+                return
+            
             df = pd.DataFrame([supplier])
 
             df = df[
