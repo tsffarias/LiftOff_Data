@@ -107,7 +107,7 @@ graph TD
 - **Uso no Projeto:** Utilizado para construir o frontend da aplicação, permitindo que os usuários insiram dados de vendas, fornecedores, funcionários e produtos de forma interativa e visualizem os resultados diretamente na interface, por meio de um dashboard.
 
 <p align="center">
-  <img src = "./img/crud_vendas.png">
+  <img src = "./img/crud_vendas_1.1.png">
 </p>
 
 #### **Pydantic**
