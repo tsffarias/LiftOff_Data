@@ -85,7 +85,6 @@ class Dashboard:
 
                 ### 🛠️ Nossa Tecnologia
                 - Pipeline em camadas: Bronze, Silver e Gold
-                - Kafka para streaming em tempo real
                 - Airbyte para ingestão de dados flexível
                 - Airflow para orquestração poderosa
                 - DBT para transformações de dados confiáveis
@@ -220,7 +219,7 @@ class Dashboard:
         6. Plataforma 'Briefer' para acesso e utilização dos dados transformados
         """)
 
-        st.image("https://raw.githubusercontent.com/tsffarias/LiftOff_Data/refs/heads/main/img/arquitetura_1.4.png", use_container_width=True, caption="Arquitetura do Pipeline de Dados")
+        st.image("https://raw.githubusercontent.com/tsffarias/LiftOff_Data/refs/heads/main/img/arquitetura_1.5.png", use_container_width=True, caption="Arquitetura do Pipeline de Dados")
 
         st.divider()
 

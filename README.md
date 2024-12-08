@@ -19,7 +19,7 @@
 Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltada para startups, com foco em integração de dados de vendas a partir de APIs e CRMs, utilizando tecnologias modernas e acessíveis. O objetivo é criar uma solução escalável para ingestão, transformação e visualização de dados, garantindo que tanto engenheiros de dados quanto analistas possam colaborar eficientemente. A arquitetura proposta inclui a divisão do pipeline em múltiplas camadas (Bronze, Silver e Gold), integração com APIs, Airbyte para ingestão de dados, Airflow para orquestração e DBT para transformação de dados. A plataforma colaborativa "Briefer" também é integrada, permitindo que analistas de dados acessem e utilizem os dados transformados de forma eficiente.
 
 <p align="center">
-<img src = "./img/arquitetura_1.4.png">
+<img src = "./img/arquitetura_1.5.png">
 </p>
 
 #### **Assistente IA Especialista em Analise de Dados e Vendas**
@@ -168,6 +168,84 @@ graph TD
 <p align="center">
 <img src = "./img/briefer.png">
 </p>
+
+#### **n8n**
+
+- **Descrição:** n8n é uma plataforma de automação de código aberto que permite criar workflows integrando diferentes ferramentas e serviços. Com uma interface visual intuitiva, é possível configurar processos complexos sem necessidade de codificação extensiva.
+- **Uso no Projeto:** Utilizado para criar um fluxo automatizado que:
+  1. Executa uma query no PostgreSQL para gerar uma audiência personalizada baseada nos produtos vendidos.
+  2. Envia informações de audiência personalizada diretamente para WhatsApp, Telegram e e-mail, facilitando a comunicação e engajamento com clientes.
+
+<p align="center">
+<img src = "./img/n8n_fluxo.png">
+</p>
+
+### Descrição da Audiência Personalizada:
+
+Essa audiência identifica clientes com base em suas compras recentes (últimos 3 dias) e recomenda o produto mais vendido na mesma categoria, excluindo o produto que já adquiriram. O objetivo é alavancar vendas adicionais por meio de recomendações personalizadas, utilizando insights das tendências de vendas dentro de categorias específicas.
+
+A lógica utilizada para gerar essa audiência é implementada na seguinte query:
+
+```sql
+WITH category_top_products AS (
+    SELECT 
+        p.categoria,
+        s.name_product,
+        p.description,
+        p.price,
+        COUNT(s.id) AS total_sales
+    FROM sales AS s
+    INNER JOIN products AS p ON p.name = s.name_product
+    WHERE s.date >= CURRENT_DATE - INTERVAL '3 month'
+    GROUP BY p.categoria, s.name_product, p.description, p.price
+    ORDER BY p.categoria, total_sales DESC
+),
+customer_last_purchase AS (
+    SELECT 
+        s.email_customer,
+        s.first_name,
+        s.last_name,
+        s.phone_number,
+        s.name_product AS last_purchased_product,
+        p.categoria AS last_purchased_category
+    FROM sales AS s
+    INNER JOIN products AS p ON p.name = s.name_product
+    WHERE s.date >= CURRENT_DATE - INTERVAL '3 days'
+),
+recommended_products AS (
+    SELECT 
+        clp.email_customer,
+        clp.first_name,
+        clp.last_name,
+        clp.phone_number,
+        clp.last_purchased_product,
+        clp.last_purchased_category,
+        ctp.name_product AS recommended_product,
+        ctp.description AS recommended_description,
+        ctp.price AS recommended_price
+    FROM customer_last_purchase AS clp
+    INNER JOIN category_top_products AS ctp 
+        ON clp.last_purchased_category = ctp.categoria
+        AND clp.last_purchased_product <> ctp.name_product
+)
+SELECT DISTINCT ON (email_customer) *
+FROM recommended_products
+ORDER BY email_customer, recommended_price DESC;
+```
+
+Email de exemplo enviado ao cliente com uma recomendação personalizada utilizando n8n:
+<p align="center">
+<img src = "./img/n8n_email.png">
+</p>
+
+### Importância:
+
+1. **Personalização**: Oferece uma experiência personalizada ao cliente, aumentando a probabilidade de engajamento e compra.
+2. **Maximização de Vendas**: Promove produtos populares dentro da mesma categoria, otimizando o cross-selling e impulsionando a receita.
+3. **Insights Baseados em Dados**: Utiliza tendências de vendas históricas para identificar produtos com maior potencial de sucesso.
+4. **Satisfação do Cliente**: Reforça a percepção de valor da marca ao sugerir produtos alinhados às preferências dos clientes.
+
+Essa abordagem é essencial para negócios que desejam aumentar a conversão e fortalecer a fidelidade dos clientes, aproveitando dados históricos e padrões de comportamento.
 
 ---
 

@@ -85,6 +85,29 @@ services:
     networks:
       - mynetwork
 
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=${DB_HOST_PROD}
+      - DB_POSTGRESDB_PORT=${DB_PORT_PROD}
+      - DB_POSTGRESDB_DATABASE=${DB_NAME_PROD}
+      - DB_POSTGRESDB_USER=${DB_USER_PROD}
+      - DB_POSTGRESDB_PASSWORD=${DB_PASS_PROD}
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+    ports:
+      - 5678:5678
+    links:
+      - postgres
+    volumes:
+      - n8n_storage:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mynetwork
+
   minio:
     image: minio/minio
     container_name: minio
@@ -114,4 +137,6 @@ volumes:
   postgresql_bin:
     driver: local
   minio_data:
+    driver: local
+  n8n_storage:
     driver: local

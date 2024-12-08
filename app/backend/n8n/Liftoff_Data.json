@@ -1,0 +1,136 @@
+{
+  "name": "Liftoff Data",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH category_top_products AS (\n    SELECT \n        p.categoria,\n        s.name_product,\n        p.description,\n        p.price,\n        COUNT(s.id) AS total_sales\n    FROM sales AS s\n    INNER JOIN products AS p ON p.name = s.name_product\n    WHERE s.date >= CURRENT_DATE - INTERVAL '3 month'\n    GROUP BY p.categoria, s.name_product, p.description, p.price\n    ORDER BY p.categoria, total_sales DESC\n),\ncustomer_last_purchase AS (\n    SELECT \n        s.email_customer,\n        s.first_name,\n        s.last_name,\n        s.phone_number,\n        s.name_product AS last_purchased_product,\n        p.categoria AS last_purchased_category\n    FROM sales AS s\n    INNER JOIN products AS p ON p.name = s.name_product\n    WHERE s.date >= CURRENT_DATE - INTERVAL '3 days'\n),\nrecommended_products AS (\n    SELECT \n        clp.email_customer,\n        clp.first_name,\n        clp.last_name,\n        clp.phone_number,\n        clp.last_purchased_product,\n        clp.last_purchased_category,\n        ctp.name_product AS recommended_product,\n        ctp.description AS recommended_description,\n        ctp.price AS recommended_price\n    FROM customer_last_purchase AS clp\n    INNER JOIN category_top_products AS ctp \n        ON clp.last_purchased_category = ctp.categoria\n        AND clp.last_purchased_product <> ctp.name_product\n)\nSELECT DISTINCT ON (email_customer) *\nFROM recommended_products\nwhere email_customer = 'tsffarias@gmail.com'\nORDER BY email_customer, recommended_price DESC;",
+        "options": {}
+      },
+      "id": "7c155b5d-ef5b-4d2e-a6d9-3c20a6b0fece",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        840,
+        260
+      ],
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "credentials": {
+        "postgres": {
+          "id": "iAHEgvwx3nJ69PCU",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"audience sent successfully\"\n}",
+        "options": {}
+      },
+      "id": "85dfac52-30e0-4b2a-981f-9be0ce7dfd70",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "tsffarias@gmail.com",
+        "toEmail": "={{ $json.email_customer }}",
+        "subject": "Recomendação Especial Liftoff Data",
+        "html": "=<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Recomendação Personalizada</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            background-color: #f4f4f4;\n            margin: 0;\n            padding: 0;\n            color: #333;\n        }\n        .email-container {\n            max-width: 600px;\n            margin: 20px auto;\n            background-color: #fff;\n            padding: 20px;\n            border-radius: 10px;\n            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\n        }\n        .header {\n            text-align: center;\n            padding: 10px 0;\n        }\n        .header h1 {\n            color: #0056b3;\n        }\n        .product-section {\n            margin: 20px 0;\n        }\n        .product-section h2 {\n            color: #0056b3;\n        }\n        .product-card {\n            display: flex;\n            align-items: center;\n            background-color: #f9f9f9;\n            border: 1px solid #ddd;\n            border-radius: 8px;\n            padding: 10px;\n            margin-top: 10px;\n        }\n        .product-card img {\n            max-width: 100px;\n            margin-right: 20px;\n            border-radius: 5px;\n        }\n        .product-info {\n            flex-grow: 1;\n        }\n        .product-info h3 {\n            margin: 0;\n            color: #333;\n        }\n        .product-info p {\n            margin: 5px 0;\n        }\n        .cta {\n            text-align: center;\n            margin: 20px 0;\n        }\n        .cta a {\n            background-color: #0056b3;\n            color: #fff;\n            text-decoration: none;\n            padding: 10px 20px;\n            border-radius: 5px;\n            font-size: 16px;\n        }\n        .cta a:hover {\n            background-color: #003d80;\n        }\n        .footer {\n            text-align: center;\n            font-size: 12px;\n            color: #777;\n            margin-top: 20px;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"email-container\">\n        <div class=\"header\">\n            <h1>Olá, {{ $json.first_name }}!</h1>\n            <p>Temos uma recomendação especial para você com base na sua última compra.</p>\n        </div>\n        <div class=\"product-section\">\n            <h2>Recomendação Personalizada:</h2>\n            <div class=\"product-card\">\n                <img src=\"https://via.placeholder.com/100\" alt=\"Imagem do Produto\">\n                <div class=\"product-info\">\n                    <h3>{{ $json.recommended_product }}</h3>\n                    <p>{{ $json.recommended_description }}</p>\n                    <p><strong>Preço:</strong> R$ {{ $json.recommended_price }}</p>\n                    <p><strong>Categoria:</strong> {{ $json.last_purchased_category }} </p>\n                </div>\n            </div>\n        </div>\n        <div class=\"cta\">\n            <a href=\"https://example.com/produto/{{ $json.recommended_product }}\" target=\"_blank\">Ver Mais Detalhes</a>\n        </div>\n        <div class=\"footer\">\n            <p>Você recebeu este e-mail porque comprou o produto {{ $json.last_purchased_product }} conosco recentemente.</p>\n            <p>Se preferir, pode gerenciar suas preferências de comunicação <a href=\"https://example.com/unsubscribe\" target=\"_blank\">aqui</a>.</p>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "a391438b-8dca-4b5c-8bb0-280c29a446a0",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        260
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "EenOi01bShBa2g34",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "71601a84-5e3d-4780-97f8-b74fc473e6ba",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "8b9e87eb-27bc-4cf9-8154-3e6bbb7d0034",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        620,
+        260
+      ],
+      "webhookId": "71601a84-5e3d-4780-97f8-b74fc473e6ba"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3f77ad00-0ce4-4c73-953d-8214fe1d41e2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b1db6c456dd2c0caacf76e49338d6ea94928cd687caa24677e044db92e3309c5"
+  },
+  "id": "Vxms3PpiapSyQKZj",
+  "tags": [
+    {
+      "createdAt": "2024-12-08T14:43:03.262Z",
+      "updatedAt": "2024-12-08T14:43:03.262Z",
+      "id": "BPCfUcbjgLnEdTtx",
+      "name": "audiencia_top_produtos"
+    }
+  ]
+}

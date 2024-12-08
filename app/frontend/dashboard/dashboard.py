@@ -41,18 +41,18 @@ def show_table_from_data(data, table_name):
 # Função para exibir métricas
 def display_metrics(sales_df, employee_df):
     # Verifica se a coluna 'produto' está presente
-    if 'produto' in sales_df.columns:
-        num_produtos = sales_df['produto'].nunique()
+    if 'name_product' in sales_df.columns:
+        num_produtos = sales_df['name_product'].nunique()
     else:
         num_produtos = 0
-        st.warning("⚠️ Coluna 'produto' ausente no DataFrame de vendas.")
+        st.warning("⚠️ Coluna 'name_product' ausente no DataFrame de vendas.")
 
     # Verifica se a coluna 'valor' está presente
-    if 'valor' in sales_df.columns:
-        receita_total = sales_df['valor'].sum()
+    if 'price' in sales_df.columns:
+        receita_total = sales_df['price'].sum()
     else:
         receita_total = 0.0
-        st.warning("⚠️ Coluna 'valor' ausente no DataFrame de vendas.")
+        st.warning("⚠️ Coluna 'price' ausente no DataFrame de vendas.")
 
     # Verifica se a coluna 'id' está presente
     if 'id' in sales_df.columns:
@@ -134,12 +134,12 @@ def display_charts(sales_df, employee_df):
         employee_df['hire_date'] = employee_df['hire_date'].dt.tz_localize(None)
 
     # Gráfico de Vendas por Data
-    if 'data' in sales_df.columns:
-        sales_by_date = sales_df.groupby(sales_df['data'].dt.date)['valor'].sum().reset_index()
+    if 'date' in sales_df.columns:
+        sales_by_date = sales_df.groupby(sales_df['date'].dt.date)['price'].sum().reset_index()
         # Transformar em gráfico de área
-        fig_sales_date = px.area(sales_by_date, x='data', y='valor')
+        fig_sales_date = px.area(sales_by_date, x='date', y='price')
         # Calcular a média
-        media_vendas = sales_by_date['valor'].mean()
+        media_vendas = sales_by_date['price'].mean()
         # Adicionar linha de média vermelha
         fig_sales_date.add_hline(y=media_vendas, line_dash="dash", line_color="red",
                                  annotation_text=f"Média: R$ {media_vendas:,.2f}", 
@@ -148,18 +148,18 @@ def display_charts(sales_df, employee_df):
         st.write("Este gráfico mostra a evolução das vendas ao longo do tempo, permitindo identificar tendências e sazonalidades.")
         st.plotly_chart(fig_sales_date)
     else:
-        st.warning("A coluna 'data' não está presente nos dados de vendas.")
+        st.warning("A coluna 'date' não está presente nos dados de vendas.")
 
     # Gráfico de Vendas por Produto
-    sales_by_product = sales_df.groupby('produto')['valor'].sum().reset_index()
-    fig_sales_product = px.bar(sales_by_product, x='produto', y='valor')
+    sales_by_product = sales_df.groupby('name_product')['price'].sum().reset_index()
+    fig_sales_product = px.bar(sales_by_product, x='name_product', y='price')
     st.subheader("Vendas por Produto")
     st.write("Este gráfico apresenta o total de vendas por produto, destacando quais produtos geraram mais receita.")
     st.plotly_chart(fig_sales_product)
 
     # Top 10 Melhores Vendedores
-    top_vendedores = sales_df.groupby('email')['valor'].sum().nlargest(10).reset_index()
-    fig_top_vendedores = px.bar(top_vendedores, x='email', y='valor')
+    top_vendedores = sales_df.groupby('email_employee')['price'].sum().nlargest(10).reset_index()
+    fig_top_vendedores = px.bar(top_vendedores, x='email_employee', y='price')
     st.subheader("Top 10 Melhores Vendedores")
     st.write("Este gráfico mostra os 10 vendedores com maior volume de vendas, reconhecendo a performance individual.")
     st.plotly_chart(fig_top_vendedores)
@@ -351,13 +351,13 @@ def dashboard():
     employee_df = pd.DataFrame(employee_data)
 
     # Conversão de colunas de data para datetime
-    if 'data' in sales_df.columns:
-        sales_df['data'] = pd.to_datetime(sales_df['data'], errors='coerce')
+    if 'date' in sales_df.columns:
+        sales_df['date'] = pd.to_datetime(sales_df['date'], errors='coerce')
         # Remover fuso horário das datas
-        sales_df['data'] = sales_df['data'].dt.tz_localize(None)
+        sales_df['date'] = sales_df['date'].dt.tz_localize(None)
 
-        min_date_sales = sales_df['data'].min().to_pydatetime()
-        max_date_sales = sales_df['data'].max().to_pydatetime()
+        min_date_sales = sales_df['date'].min().to_pydatetime()
+        max_date_sales = sales_df['date'].max().to_pydatetime()
 
         # Seletor de intervalo de datas para vendas usando slider
         st.header("Filtro de Data para Vendas")
@@ -372,9 +372,9 @@ def dashboard():
         # Filtrar o DataFrame de vendas com base no intervalo selecionado
         if date_range_sales:
             start_datetime_sales, end_datetime_sales = date_range_sales
-            sales_df = sales_df[(sales_df['data'] >= start_datetime_sales) & (sales_df['data'] <= end_datetime_sales)]
+            sales_df = sales_df[(sales_df['date'] >= start_datetime_sales) & (sales_df['date'] <= end_datetime_sales)]
     else:
-        st.warning("A coluna 'data' não está presente nos dados de vendas.")
+        st.warning("A coluna 'date' não está presente nos dados de vendas.")
 
     # Exibir métricas e gráficos
     display_metrics(sales_df, employee_df)
