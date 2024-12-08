@@ -104,13 +104,17 @@ def gerar_dados_sales(n_linhas=5000):
     for sale_id in range(1, n_linhas + 1): 
         data.append({
             'id': sale_id,
-            'email': fake.email(),
-            'valor': round(random.uniform(50, 2000), 2),
-            'quantidade': random.randint(1, 10),
-            'produto':  random.choice(list(ProdutoEnum)).value,
-            'data': fake.date_time_between(start_date='-2y', end_date='now'),
+            'email_employee': fake.email(),
+            'email_customer': fake.email(),
+            'first_name': fake.first_name(),
+            'last_name': fake.last_name(),
+            'phone_number': fake.phone_number(),
+            'price': round(random.uniform(50, 2000), 2),
+            'quantity': random.randint(1, 10),
+            'name_product':  random.choice(list(ProdutoEnum)).value,
+            'date': fake.date_time_between(start_date='-2y', end_date='now'),
             'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        })
+        })  
     
     return pd.DataFrame(data)
 # Função para gerar dados de fornecedores (suppliers)

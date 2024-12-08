@@ -36,6 +36,10 @@ def create():
 
     with st.form("new_sale"):
         email = st.selectbox("Email do Vendedor", options=emails)
+        email_customer = st.text_input("Email do Cliente")
+        first_name = st.text_input("Primeiro nome do Cliente")
+        last_name = st.text_input("Ultimo nome do Cliente")
+        phone_number = st.text_input("Número de telefone do Cliente")
         data = st.date_input("Data da compra", datetime.now())
         hora = st.time_input("Hora da compra", value=time(9, 0))
         valor = st.number_input("Valor da venda", min_value=0.0, format="%.2f")
@@ -55,11 +59,15 @@ def create():
                 response = requests.post(
                     f"{os.getenv('BACKEND_URL')}/sales/",
                     json={
-                        "email": email,
-                        "data": data_hora.isoformat(),
-                        "valor": valor,
-                        "quantidade": quantidade,
-                        "produto": produto,
+                        "email_employee": email,
+                        "email_customer": email_customer,
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "phone_number": phone_number,
+                        "date": data_hora.isoformat(),
+                        "price": valor,
+                        "quantity": quantidade,
+                        "name_product": produto,
                     },
                 )
                 show_response_message(response)

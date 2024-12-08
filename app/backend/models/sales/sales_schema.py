@@ -14,22 +14,30 @@ class SalesBase(BaseModel):
     Modelo de dados para as vendas.
 
     Args:
-        email (EmailStr): email do comprador
-        data (datetime): data da compra
-        valor (PositiveFloat): valor da compra
-        produto (PositiveInt): nome do produto
-        quantidade (PositiveInt): quantidade de produtos
-        produto (ProdutoEnum): categoria do produto
+        email_employee (EmailStr): email do funcionario
+        email_customer (EmailStr): email do comprador
+        date (datetime): data da compra
+        first_name (str): Primeiro nome do comprador
+        last_name (str): Ultimo nome do comprador   
+        phone_number (str): Número de telefone do comprador
+        price (PositiveFloat): valor da compra
+        name_product (PositiveInt): nome do produto
+        quantity (PositiveInt): quantidade de produtos
+        produto_category (ProdutoEnum): categoria do produto
     """
 
-    email: EmailStr
-    data: datetime
-    valor: PositiveFloat
-    quantidade: PositiveInt
-    produto: str
+    email_employee: EmailStr
+    email_customer: EmailStr
+    first_name: str
+    last_name: str    
+    phone_number: str
+    date: datetime
+    price: PositiveFloat
+    quantity: PositiveInt
+    name_product: str
 
     '''
-    @field_validator("produto", mode="before")
+    @field_validator("produto_category", mode="before")
     @classmethod
     def check_categoria(cls, v):
         if v in [item.value for item in ProdutoEnum]:
@@ -48,14 +56,18 @@ class SalesResponse(SalesBase):
         from_attributes = True
 
 class SalesUpdate(BaseModel):
-    email: Optional[EmailStr] = None
-    data: Optional[datetime] = None 
-    valor: Optional[PositiveFloat] = None
-    quantidade: Optional[PositiveInt] = None
-    produto: Optional[str] = None
+    email_employee: Optional[EmailStr] = None
+    email_customer: Optional[EmailStr] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None    
+    phone_number: Optional[str] = None
+    date: Optional[datetime] = None 
+    price: Optional[PositiveFloat] = None
+    quantity: Optional[PositiveInt] = None
+    name_product: Optional[str] = None
 
     '''
-    @field_validator("produto", mode='before')
+    @field_validator("name_product", mode='before')
     def check_categoria(cls, v):
         if v is None:
             return v

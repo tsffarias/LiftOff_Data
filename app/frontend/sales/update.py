@@ -30,15 +30,19 @@ def update():
             df = df[
                 [
                     "id",
-                    "email",
-                    "produto",
-                    "valor",
-                    "quantidade",
-                    "data"
+                    "email_employee",
+                    "email_customer",
+                    "first_name",
+                    "last_name",
+                    "phone_number",
+                    "name_product",
+                    "price",
+                    "quantity",
+                    "date"
                 ]
             ]
 
-            df['data'] = pd.to_datetime(df['data'])
+            df['date'] = pd.to_datetime(df['date'])
 
         else:
             st.warning("Venda não encontrada!")
@@ -72,7 +76,7 @@ def update():
 
             with col1:
                 # Garante que o email original da venda esteja na lista de opções
-                original_email = st.session_state["df_sales_upd"].at[0, "email"]
+                original_email = st.session_state["df_sales_upd"].at[0, "email_employee"]
                 if original_email not in emails:
                     emails.insert(0, original_email)
 
@@ -81,12 +85,16 @@ def update():
                     options=emails,
                     index=emails.index(original_email)
                 )
-                new_valor = st.number_input("Novo Valor da venda", min_value=0.01, format="%.2f", value=st.session_state["df_sales_upd"].at[0, "valor"], disabled=False, key="input_price_sale")
-                new_quantidade = st.number_input("Nova Quantidade de produtos", min_value=1, step=1, value=st.session_state["df_sales_upd"].at[0, "quantidade"], disabled=False, key="input_quantidade_sale")
+                new_email_customer = st.text_input("Novo Email do Cliente", value=st.session_state["df_sales_upd"].at[0, "email_customer"], disabled=False, key="input_email_customer")
+                phone_number = st.text_input("Novo número de telefone Cliente", value=st.session_state["df_sales_upd"].at[0, "phone_number"], disabled=False, key="input_phone_number_customer")
+                new_valor = st.number_input("Novo Valor da venda", min_value=0.01, format="%.2f", value=st.session_state["df_sales_upd"].at[0, "price"], disabled=False, key="input_price_sale")
+                new_quantidade = st.number_input("Nova Quantidade de produtos", min_value=1, step=1, value=st.session_state["df_sales_upd"].at[0, "quantity"], disabled=False, key="input_quantidade_sale")
 
             with col2:
+                new_first_name = st.text_input("Novo Primeiro nome do Cliente", value=st.session_state["df_sales_upd"].at[0, "first_name"], disabled=False, key="input_firstname_customer")
+                new_last_name = st.text_input("Novo Ultimo nome do Cliente", value=st.session_state["df_sales_upd"].at[0, "last_name"], disabled=False, key="input_lastname_customer")
                 # Garante que o produto original da venda esteja na lista de opções
-                original_product = st.session_state["df_sales_upd"].at[0, "produto"]
+                original_product = st.session_state["df_sales_upd"].at[0, "name_product"]
                 if original_product not in product_names:
                     product_names.insert(0, original_product)
 
@@ -96,8 +104,8 @@ def update():
                     index=product_names.index(original_product)
                 )
                 # Extrai a data e hora da coluna 'data'
-                current_data = st.session_state["df_sales_upd"].at[0, "data"].date()
-                current_hora = st.session_state["df_sales_upd"].at[0, "data"].time()
+                current_data = st.session_state["df_sales_upd"].at[0, "date"].date()
+                current_hora = st.session_state["df_sales_upd"].at[0, "date"].time()
 
                 # Preenche os campos com os valores extraídos
                 new_data = st.date_input("Nova Data da compra", value=current_data, disabled=False, key="input_sale_date")
@@ -107,10 +115,14 @@ def update():
 
             if update_sale_bt:
                 update_sale = {}
-                update_sale["email"] = new_email
-                update_sale["produto"] = new_product
-                update_sale["valor"] = new_valor
-                update_sale["quantidade"] = new_quantidade
+                update_sale["email_employee"] = new_email
+                update_sale["email_customer"] = new_email_customer
+                update_sale["first_name"] = new_first_name
+                update_sale["last_name"] = new_last_name
+                update_sale["phone_number"] = phone_number
+                update_sale["name_product"] = new_product
+                update_sale["price"] = new_valor
+                update_sale["quantity"] = new_quantidade
                 
                 if new_data is not None and new_hora is not None:
                     # Combina data e hora
@@ -123,9 +135,9 @@ def update():
                     combined_datetime = combined_datetime.replace(tzinfo=timezone.utc)
 
                     # Converte para ISO 8601 com microsegundos e adiciona 'Z' no final
-                    update_sale["data"] = combined_datetime.isoformat(timespec='microseconds').replace('+00:00', 'Z')
+                    update_sale["date"] = combined_datetime.isoformat(timespec='microseconds').replace('+00:00', 'Z')
                 else:
-                    update_sale["data"] = None                   
+                    update_sale["date"] = None                   
 
                 if update_sale:
                     response = requests.put(

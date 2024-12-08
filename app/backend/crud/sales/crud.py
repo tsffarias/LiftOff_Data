@@ -38,16 +38,24 @@ def update_sales(db: Session, sales_id: int, sales: SalesUpdate):
     if db_sales is None:
         return None
 
-    if sales.email is not None:
-        db_sales.email = sales.email
-    if sales.valor is not None:
-        db_sales.valor = sales.valor
-    if sales.quantidade is not None:
-        db_sales.quantidade = sales.quantidade
-    if sales.produto is not None:
-        db_sales.produto = sales.produto
-    if sales.data is not None:
-        db_sales.data = sales.data
+    if sales.email_employee is not None:
+        db_sales.email_employee = sales.email_employee
+    if sales.email_customer is not None:
+        db_sales.email_customer = sales.email_customer
+    if sales.first_name is not None:
+        db_sales.first_name = sales.first_name
+    if sales.last_name is not None:
+        db_sales.last_name = sales.last_name
+    if sales.phone_number is not None:
+        db_sales.phone_number = sales.phone_number
+    if sales.price is not None:
+        db_sales.price = sales.price
+    if sales.quantity is not None:
+        db_sales.quantity = sales.quantity
+    if sales.name_product is not None:
+        db_sales.name_product = sales.name_product
+    if sales.date is not None:
+        db_sales.date = sales.date    
 
     db.commit()
     return db_sales

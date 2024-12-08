@@ -10,7 +10,7 @@ from utils import show_response_message
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def read_sale():
-    options = ["Selecione uma opção:", "ID", "Email", "Produto", "Data"]
+    options = ["Selecione uma opção:", "ID", "Email Funcionario", "Email Cliente", "Nome Produto", "Data"]
     select_search = st.selectbox("Buscar por:", options=options)
 
     # Determina o estado do campo de entrada de texto
@@ -46,13 +46,15 @@ def read_sale():
                         return
                     df = pd.DataFrame(sales)
                     
-                    if select_search == "Email":
-                        df_sales = df[df['email'].str.contains(search_field, case=False, na=False)]
+                    if select_search == "Email Funcionario":
+                        df_sales = df[df['email_employee'].str.contains(search_field, case=False, na=False)]
+                    elif select_search == "Email Cliente":
+                        df_sales = df[df['email_customer'].str.contains(search_field, case=False, na=False)]
                     elif select_search == "Produto":
-                        df_sales = df[df['produto'].str.contains(search_field, case=False, na=False)]
+                        df_sales = df[df['name_product'].str.contains(search_field, case=False, na=False)]
                     elif select_search == "Data":
                         search_field_str = search_field.strftime('%Y-%m-%d')
-                        df_sales = df[df['data'].str.contains(search_field_str, case=False, na=False)]
+                        df_sales = df[df['date'].str.contains(search_field_str, case=False, na=False)]
                     else:  # Assuming 'ID'
                         df_sales = df[df['id'].astype(str).str.contains(search_field, case=False, na=False)]
                                                         
