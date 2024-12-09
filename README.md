@@ -174,10 +174,11 @@ graph TD
 - **Descrição:** n8n é uma plataforma de automação de código aberto que permite criar workflows integrando diferentes ferramentas e serviços. Com uma interface visual intuitiva, é possível configurar processos complexos sem necessidade de codificação extensiva.
 - **Uso no Projeto:** Utilizado para criar um fluxo automatizado que:
   1. Executa uma query no PostgreSQL para gerar uma audiência personalizada baseada nos produtos vendidos.
+  2. Através de um Assistente IA com modelo chatpgt 4, é gerado um copy personalizado para o email marketing da audiência gerado no passo anterior.
   2. Envia informações de audiência personalizada diretamente para WhatsApp, Telegram e e-mail, facilitando a comunicação e engajamento com clientes.
 
 <p align="center">
-<img src = "./img/n8n_fluxo.png">
+<img src = "./img/n8n_fluxo_1.1.png">
 </p>
 
 ### Descrição da Audiência Personalizada:
@@ -233,9 +234,9 @@ FROM recommended_products
 ORDER BY email_customer, recommended_price DESC;
 ```
 
-Email de exemplo enviado ao cliente com uma recomendação personalizada utilizando n8n:
+Email de exemplo enviado ao cliente com uma recomendação personalizada utilizando n8n e Assistente IA especializado em Copy e Email Marketing:
 <p align="center">
-<img src = "./img/n8n_email.png">
+<img src = "./img/n8n_email_1.1.png">
 </p>
 
 ### Importância:
