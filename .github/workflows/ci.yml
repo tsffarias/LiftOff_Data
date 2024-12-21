@@ -17,10 +17,16 @@ jobs:
               with:
                 python-version: ${{ matrix.python-version }}
 
-            - name: Install Firefox & geckodriver
+            - name: Install Firefox
               run: |
                 sudo apt-get update
-                sudo apt-get install -y firefox firefox-geckodriver
+                sudo apt-get install -y firefox
+
+            - name: Set up geckodriver
+              uses: browser-actions/setup-geckodriver@latest
+              with:
+                geckodriver-version: 'v0.33.0'
+                token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Install dependencies
               run: pip install -r requirements.txt
