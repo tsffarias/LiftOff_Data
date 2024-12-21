@@ -1,9 +1,9 @@
 import pytest
-from datetime import datetime, date
+from datetime import date
 from pydantic import ValidationError
 from app.backend.models.product.product_schema import ProductCreate
 from app.backend.models.employee.employee_schema import EmployeeCreate
-from app.backend.models.supplier.supplier_schema import SupplierCreate, ProductCategoriesEnum
+from app.backend.models.supplier.supplier_schema import SupplierCreate
 
 def test_product_com_dados_validos():
     dados_validos = {
