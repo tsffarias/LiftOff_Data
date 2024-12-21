@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 @pytest.fixture
 def driver():
     # Iniciar o Streamlit em background
-    process = subprocess.Popen(["streamlit", "run", "app/frontend/app.py"])
+    process = subprocess.Popen(["streamlit", "run", "app/frontend/app.py", "--server.headless", "true"])
     options = Options()
     options.headless = True  # Executar em modo headless
     driver = webdriver.Firefox(options=options)
