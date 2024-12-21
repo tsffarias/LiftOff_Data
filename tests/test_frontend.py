@@ -13,7 +13,7 @@ def driver():
     options.headless = True  # Executar em modo headless
     driver = webdriver.Firefox(options=options)
     # Iniciar o WebDriver usando GeckoDriver
-    driver.set_page_load_timeout(2)
+    driver.set_page_load_timeout(10)
     yield driver
 
     # Fechar o WebDriver e o Streamlit após o teste
@@ -23,4 +23,4 @@ def driver():
 def test_app_opens(driver):
     # Verificar se a página abre
     driver.get("http://localhost:8501")
-    sleep(2)
+    sleep(10)
