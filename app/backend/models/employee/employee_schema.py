@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, PositiveFloat, field_validator, computed_field, validator
+from pydantic import BaseModel, EmailStr, PositiveFloat, field_validator, computed_field, validator, ConfigDict
 from enum import Enum
 from datetime import date, datetime, timedelta
 from typing import Optional
@@ -87,8 +87,7 @@ class EmployeeResponse(EmployeeBase):
         else:
             return f"{days} dias"
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EmployeeUpdate(BaseModel):

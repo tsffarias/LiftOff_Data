@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Tuple
-from pydantic import BaseModel, EmailStr, PositiveFloat, PositiveInt, field_validator
+from pydantic import BaseModel, EmailStr, PositiveFloat, PositiveInt, field_validator, ConfigDict
 from enum import Enum
 from typing import Optional
 
@@ -52,8 +52,7 @@ class SalesResponse(SalesBase):
     id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class SalesUpdate(BaseModel):
     email_employee: Optional[EmailStr] = None

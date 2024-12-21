@@ -1,4 +1,4 @@
-from pydantic import BaseModel, PositiveFloat, EmailStr, field_validator, Field
+from pydantic import BaseModel, PositiveFloat, EmailStr, field_validator, Field, ConfigDict
 from enum import Enum
 from datetime import datetime
 from typing import Optional
@@ -70,8 +70,7 @@ class ProductResponse(ProductBase):
     id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProductUpdate(BaseModel):
