@@ -22,17 +22,19 @@ jobs:
                 sudo apt-get update
                 sudo apt-get install -y docker-compose
             
-            - name: Build and run docker-compose
-              env:
-                DB_NAME_PROD: ${{ secrets.DB_NAME_PROD }}
-                DB_USER_PROD: ${{ secrets.DB_USER_PROD }}
-                DB_PASS_PROD: ${{ secrets.DB_PASS_PROD }}
-                DB_HOST_PROD: ${{ secrets.DB_HOST_PROD }}
-                DB_PORT_PROD: ${{ secrets.DB_PORT_PROD }}
-                PGADMIN_EMAIL: ${{ secrets.PGADMIN_EMAIL }}
-                PGADMIN_PASSWORD: ${{ secrets.PGADMIN_PASSWORD }}
-                GENERIC_TIMEZONE: ${{ secrets.GENERIC_TIMEZONE }}
-              run: docker-compose up --build -d
+            - name: Cria arquivo .env
+              run: |
+                echo DB_NAME_PROD=${{ secrets.DB_NAME_PROD }} >> .env
+                echo DB_USER_PROD=${{ secrets.DB_USER_PROD }} >> .env
+                echo DB_PASS_PROD=${{ secrets.DB_PASS_PROD }} >> .env
+                echo DB_HOST_PROD=${{ secrets.DB_HOST_PROD }} >> .env
+                echo DB_PORT_PROD=${{ secrets.DB_PORT_PROD }} >> .env
+                echo PGADMIN_EMAIL=${{ secrets.PGADMIN_EMAIL }} >> .env
+                echo PGADMIN_PASSWORD=${{ secrets.PGADMIN_PASSWORD }} >> .env
+                echo GENERIC_TIMEZONE=${{ secrets.GENERIC_TIMEZONE }} >> .env
+
+            - name: Docker Compose up
+              run: docker-compose --env-file .env up --build -d
 
             - name: Test Models with pytest
               run: pytest tests/test_models.py 
