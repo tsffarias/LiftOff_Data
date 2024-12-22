@@ -17,15 +17,6 @@ jobs:
               with:
                 python-version: ${{ matrix.python-version }}
 
-            - name: Install dependencies
-              run: pip install -r requirements.txt
-
-            - name: Install dependencies backend
-              run: pip install -r app/backend/requirements.txt
-
-            - name: Install dependencies frontend
-              run: pip install -r app/frontend/requirements.txt
-
             - name: Build and run docker-compose
               run: |
                 docker-compose up --build -d
