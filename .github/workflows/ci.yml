@@ -36,5 +36,8 @@ jobs:
             - name: Docker Compose up
               run: docker-compose --env-file .env up --build -d
 
+            - name: Install dependencies
+              run: pip install -r requirements.txt
+            
             - name: Test Models with pytest
               run: pytest tests/test_models.py 
