@@ -107,10 +107,10 @@ graph TD
 
 ```mermaid
 graph TD
-    A[Usuário] --> |Envia Requisição HTTP| B{NGINX (Load Balancer)}
-    B --> |Distribui Requisições| C[Backend-1]
-    B --> |Distribui Requisições| D[Backend-2]
-    B --> |Distribui Requisições| E[Backend-3]
+    A[Usuario] -->|Envia Requisicao HTTP| B{NGINX Load Balancer}
+    B -->|Distribui Requisicoes| C[Backend-1]
+    B -->|Distribui Requisicoes| D[Backend-2]
+    B -->|Distribui Requisicoes| E[Backend-3]
 ```
 
 #### **Streamlit**
