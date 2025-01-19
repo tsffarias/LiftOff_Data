@@ -19,7 +19,7 @@
 Este projeto descreve uma arquitetura de pipeline de dados de baixo custo voltada para startups, com foco em integração de dados de vendas a partir de APIs e CRMs, utilizando tecnologias modernas e acessíveis. O objetivo é criar uma solução escalável para ingestão, transformação e visualização de dados, garantindo que tanto engenheiros de dados quanto analistas possam colaborar eficientemente. A arquitetura proposta inclui a divisão do pipeline em múltiplas camadas (Bronze, Silver e Gold), integração com APIs, Airbyte para ingestão de dados, Airflow para orquestração e DBT para transformação de dados. A plataforma colaborativa "Briefer" também é integrada, permitindo que analistas de dados acessem e utilizem os dados transformados de forma eficiente.
 
 <p align="center">
-<img src = "./img/arquitetura_1.5.png">
+<img src = "./img/arquitetura_1.6.png">
 </p>
 
 #### **Assistente IA Especialista em Analise de Dados e Vendas**
@@ -99,7 +99,19 @@ graph TD
 #### FastAPI com Swagger
 - **Descrição:** FastAPI é um framework moderno e de alto desempenho para a construção de APIs com Python 3.6+ baseado em tipos de dados. Ele é projetado para ser rápido e fácil de usar, oferecendo validação automática de dados e documentação interativa.
 - **Uso no Projeto:** Utilizado para criar a API que manipula dados de funcionários, produtos e vendas. O FastAPI gera automaticamente a documentação da API utilizando Swagger, permitindo que os desenvolvedores testem as endpoints diretamente pela interface.
-- **Acessando o Swagger:** Após iniciar a aplicação com o comando `uvicorn main:app --reload`, a documentação do Swagger pode ser acessada em `http://127.0.0.1:8000/docs`.
+- **Acessando o Swagger:** Após iniciar a aplicação com o comando `uvicorn main:app --reload`, a documentação do Swagger pode ser acessada em `http://127.0.0.1:80/docs`.
+
+#### NGINX
+- **Descrição:** NGINX é um servidor web de alto desempenho que também pode atuar como um balanceador de carga e proxy reverso. Sua arquitetura assíncrona o torna extremamente rápido e eficiente no uso de recursos.
+- **Uso no Projeto:** O NGINX está sendo usado como load balancer, distribuindo as requisições entre múltiplas instâncias do backend (Backend-1, Backend-2, Backend-3). Assim, se algum backend estiver sobrecarregado, o NGINX encaminha requisições para outro backend disponível. Ele garante maior disponibilidade (caso um container falhe, ainda há outros disponíveis), ajuda na escalabilidade (suportando mais requisições) e melhora a performance ao distribuir de forma equilibrada o tráfego entre os backends.
+
+```mermaid
+graph TD
+    A[Usuário] --> |Envia Requisição HTTP| B{NGINX (Load Balancer)}
+    B --> |Distribui Requisições| C[Backend-1]
+    B --> |Distribui Requisições| D[Backend-2]
+    B --> |Distribui Requisições| E[Backend-3]
+```
 
 #### **Streamlit**
 

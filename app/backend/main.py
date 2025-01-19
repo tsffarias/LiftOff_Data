@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import socket
 from database.database import engine
 
 import models.product.product
@@ -16,7 +17,12 @@ models.sales.sales.Base.metadata.create_all(bind=engine)
 models.employee.employee.Base.metadata.create_all(bind=engine)
 models.supplier.supplier.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(docs_url="/docs", openapi_url="/openapi.json")
+
+@app.get("/whoami") # Endpoint para teste de load balance
+def whoami():
+    return {"hostname": socket.gethostname()}
+
 app.include_router(product_router)
 app.include_router(sales_router)
 app.include_router(employee_router)

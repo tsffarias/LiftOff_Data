@@ -62,8 +62,8 @@ def display_metrics(sales_df, employee_df):
         st.warning("⚠️ Coluna 'id' ausente no DataFrame de vendas.")
 
     # Verifica se a coluna 'quantidade' está presente
-    if 'quantidade' in sales_df.columns:
-        total_itens = sales_df['quantidade'].sum()
+    if 'quantity' in sales_df.columns:
+        total_itens = sales_df['quantity'].sum()
     else:
         total_itens = 0
         st.warning("⚠️ Coluna 'quantidade' ausente no DataFrame de vendas.")

@@ -18,7 +18,8 @@ services:
     networks:
       - mynetwork
 
-  backend:
+  backend-1:
+    hostname: backend-1
     build: 
       context: ./app/backend
       dockerfile: Dockerfile
@@ -33,9 +34,66 @@ services:
     env_file:
     - .env
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       - postgres
+    networks:
+      - mynetwork
+
+  backend-2:
+    hostname: backend-2
+    build: 
+      context: ./app/backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./app/backend:/main
+    environment:
+      DB_HOST_PROD: ${DB_HOST_PROD}  
+      DB_PORT_PROD: ${DB_PORT_PROD}
+      DB_NAME_PROD: ${DB_NAME_PROD}
+      DB_USER_PROD: ${DB_USER_PROD}
+      DB_PASS_PROD: ${DB_PASS_PROD}
+    env_file:
+    - .env
+    ports:
+      - "8002:8000"
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
+
+  backend-3:
+    hostname: backend-3
+    build: 
+      context: ./app/backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./app/backend:/main
+    environment:
+      DB_HOST_PROD: ${DB_HOST_PROD}  
+      DB_PORT_PROD: ${DB_PORT_PROD}
+      DB_NAME_PROD: ${DB_NAME_PROD}
+      DB_USER_PROD: ${DB_USER_PROD}
+      DB_PASS_PROD: ${DB_PASS_PROD}
+    env_file:
+    - .env
+    ports:
+      - "8003:8000"
+    depends_on:
+      - postgres
+    networks:
+      - mynetwork
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend-1
+      - backend-2
+      - backend-3
     networks:
       - mynetwork
 

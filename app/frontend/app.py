@@ -72,18 +72,18 @@ class Dashboard:
                 """
                 Transforme sua startup com nossa solução de pipeline de dados de última geração!
 
-                ### 🎯 Nossa Missão
+                ### Nossa Missão
                 Capacitar startups com uma arquitetura de dados robusta, escalável e econômica, 
                 permitindo que você se concentre no crescimento do seu negócio.
 
-                ### 🔑 Principais Benefícios
+                ### Principais Benefícios
                 - **Economia**: Solução de baixo custo ideal para startups
                 - **Eficiência**: Processamento e análise rápida de dados de vendas
                 - **Escalabilidade**: Cresce com seu negócio
                 - **Integração**: Conecta-se facilmente com APIs e CRMs existentes
                 - **Colaboração**: Facilita o trabalho entre engenheiros e analistas de dados
 
-                ### 🛠️ Nossa Tecnologia
+                ### Nossa Tecnologia
                 - Pipeline em camadas: Bronze, Silver e Gold
                 - Airbyte para ingestão de dados flexível
                 - Airflow para orquestração poderosa
@@ -219,7 +219,7 @@ class Dashboard:
         6. Plataforma 'Briefer' para acesso e utilização dos dados transformados
         """)
 
-        st.image("https://raw.githubusercontent.com/tsffarias/LiftOff_Data/refs/heads/main/img/arquitetura_1.5.png", use_container_width=True, caption="Arquitetura do Pipeline de Dados")
+        st.image("https://raw.githubusercontent.com/tsffarias/LiftOff_Data/refs/heads/main/img/arquitetura_1.6.png", use_container_width=True, caption="Arquitetura do Pipeline de Dados")
 
         st.divider()
 
