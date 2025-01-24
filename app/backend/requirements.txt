@@ -16,3 +16,4 @@ google-auth
 google-auth-oauthlib
 google-api-core
 googleapis-common-protos
+asyncpg

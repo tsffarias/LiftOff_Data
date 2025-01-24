@@ -1,61 +1,55 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from models.sales.sales_schema import SalesUpdate, SalesCreate
 from models.sales.sales import SalesModel
 
 
-def get_sales_by_id(db: Session, sales_id: int):
+async def get_sales_by_id(db: AsyncSession, sales_id: int):
     """
-    funcao que recebe um id e retorna somente ele
+    Funcao que recebe um id e retorna somente ele
     """
-    return db.query(SalesModel).filter(SalesModel.id == sales_id).first()
+    result = await db.execute(select(SalesModel).filter(SalesModel.id == sales_id))
+    return result.scalars().first()
 
-
-def get_sales(db: Session):
+async def get_sales(db: AsyncSession):
     """
-    funcao que retorna todos os elementos
+    Funcao que retorna todos os elementos
     """
-    return db.query(SalesModel).all()
+    result = await db.execute(select(SalesModel))
+    return result.scalars().all()
 
-
-def create_sales(db: Session, sales: SalesCreate):
+async def create_sales(db: AsyncSession, sales: SalesCreate):
+    """
+    Cria uma nova venda.
+    """
     db_sales = SalesModel(**sales.model_dump())
     db.add(db_sales)
-    db.commit()
-    db.refresh(db_sales)
+    await db.commit()
+    await db.refresh(db_sales)
     return db_sales
 
-
-def delete_sales(db: Session, sales_id: int):
-    db_sales = db.query(SalesModel).filter(SalesModel.id == sales_id).first()
-    db.delete(db_sales)
-    db.commit()
+async def delete_sales(db: AsyncSession, sales_id: int):
+    """
+    Deleta uma venda específica.
+    """
+    db_sales = await get_sales_by_id(db, sales_id)
+    if db_sales:
+        await db.delete(db_sales)
+        await db.commit()
     return db_sales
 
-
-def update_sales(db: Session, sales_id: int, sales: SalesUpdate):
-    db_sales = db.query(SalesModel).filter(SalesModel.id == sales_id).first()
-
+async def update_sales(db: AsyncSession, sales_id: int, sales: SalesUpdate):
+    """
+    Atualiza uma venda existente.
+    """
+    db_sales = await get_sales_by_id(db, sales_id)
     if db_sales is None:
         return None
 
-    if sales.email_employee is not None:
-        db_sales.email_employee = sales.email_employee
-    if sales.email_customer is not None:
-        db_sales.email_customer = sales.email_customer
-    if sales.first_name is not None:
-        db_sales.first_name = sales.first_name
-    if sales.last_name is not None:
-        db_sales.last_name = sales.last_name
-    if sales.phone_number is not None:
-        db_sales.phone_number = sales.phone_number
-    if sales.price is not None:
-        db_sales.price = sales.price
-    if sales.quantity is not None:
-        db_sales.quantity = sales.quantity
-    if sales.name_product is not None:
-        db_sales.name_product = sales.name_product
-    if sales.date is not None:
-        db_sales.date = sales.date    
+    update_data = sales.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_sales, key, value)
 
-    db.commit()
+    await db.commit()
+    await db.refresh(db_sales)
     return db_sales

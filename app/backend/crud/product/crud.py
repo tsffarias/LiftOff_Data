@@ -1,53 +1,55 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from models.product.product_schema import ProductUpdate, ProductCreate
 from models.product.product import ProductModel
 
 
-def get_product(db: Session, product_id: int):
+async def get_product(db: AsyncSession, product_id: int):
     """
-    funcao que recebe um id e retorna somente ele
+    Funcao que recebe um id e retorna somente ele
     """
-    return db.query(ProductModel).filter(ProductModel.id == product_id).first()
+    result = await db.execute(select(ProductModel).filter(ProductModel.id == product_id))
+    return result.scalars().first()
 
-
-def get_products(db: Session):
+async def get_products(db: AsyncSession):
     """
-    funcao que retorna todos os elementos
+    Funcao que retorna todos os elementos
     """
-    return db.query(ProductModel).all()
+    result = await db.execute(select(ProductModel))
+    return result.scalars().all()
 
-
-def create_product(db: Session, product: ProductCreate):
+async def create_product(db: AsyncSession, product: ProductCreate):
+    """
+    Cria um novo produto.
+    """
     db_product = ProductModel(**product.model_dump())
     db.add(db_product)
-    db.commit()
-    db.refresh(db_product)
+    await db.commit()
+    await db.refresh(db_product)
     return db_product
 
-
-def delete_product(db: Session, product_id: int):
-    db_product = db.query(ProductModel).filter(ProductModel.id == product_id).first()
-    db.delete(db_product)
-    db.commit()
+async def delete_product(db: AsyncSession, product_id: int):
+    """
+    Deleta um produto específico.
+    """
+    db_product = await get_product(db, product_id)
+    if db_product:
+        await db.delete(db_product)
+        await db.commit()
     return db_product
 
-
-def update_product(db: Session, product_id: int, product: ProductUpdate):
-    db_product = db.query(ProductModel).filter(ProductModel.id == product_id).first()
-
+async def update_product(db: AsyncSession, product_id: int, product: ProductUpdate):
+    """
+    Atualiza um produto existente.
+    """
+    db_product = await get_product(db, product_id)
     if db_product is None:
         return None
 
-    if product.name is not None:
-        db_product.name = product.name
-    if product.description is not None:
-        db_product.description = product.description
-    if product.price is not None:
-        db_product.price = product.price
-    if product.categoria is not None:
-        db_product.categoria = product.categoria
-    if product.email_fornecedor is not None:
-        db_product.email_fornecedor = product.email_fornecedor
+    update_data = product.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_product, key, value)
 
-    db.commit()
+    await db.commit()
+    await db.refresh(db_product)
     return db_product

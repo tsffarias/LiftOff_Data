@@ -1,49 +1,49 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from models.supplier.supplier_schema import SupplierUpdate, SupplierCreate
 from models.supplier.supplier import SupplierModel
 
 
-def get_supplier(db: Session, supplier_id: int):
+async def get_supplier(db: AsyncSession, supplier_id: int):
     """
     Função que recebe um id e retorna somente o fornecedor correspondente
     """
-    return db.query(SupplierModel).filter(SupplierModel.supplier_id == supplier_id).first()
+    result = await db.execute(select(SupplierModel).filter(SupplierModel.supplier_id == supplier_id))
+    return result.scalars().first()
 
 
-def get_suppliers(db: Session):
+async def get_suppliers(db: AsyncSession):
     """
     Função que retorna todos os fornecedores
     """
-    return db.query(SupplierModel).all()
+    result = await db.execute(select(SupplierModel))
+    return result.scalars().all()
 
-
-def create_supplier(db: Session, supplier: SupplierCreate):
+async def create_supplier(db: AsyncSession, supplier: SupplierCreate):
     """
-    Função que cria um novo fornecedor
+    Cria um novo fornecedor.
     """
     db_supplier = SupplierModel(**supplier.model_dump())
     db.add(db_supplier)
-    db.commit()
-    db.refresh(db_supplier)
+    await db.commit()
+    await db.refresh(db_supplier)
     return db_supplier
 
-
-def delete_supplier(db: Session, supplier_id: int):
+async def delete_supplier(db: AsyncSession, supplier_id: int):
     """
-    Função que deleta um fornecedor
+    Deleta um fornecedor específico.
     """
-    db_supplier = db.query(SupplierModel).filter(SupplierModel.supplier_id == supplier_id).first()
-    db.delete(db_supplier)
-    db.commit()
+    db_supplier = await get_supplier(db, supplier_id)
+    if db_supplier:
+        await db.delete(db_supplier)
+        await db.commit()
     return db_supplier
 
-
-def update_supplier(db: Session, supplier_id: int, supplier: SupplierUpdate):
+async def update_supplier(db: AsyncSession, supplier_id: int, supplier: SupplierUpdate):
     """
-    Função que atualiza um fornecedor
+    Atualiza um fornecedor existente.
     """
-    db_supplier = db.query(SupplierModel).filter(SupplierModel.supplier_id == supplier_id).first()
-
+    db_supplier = await get_supplier(db, supplier_id)
     if db_supplier is None:
         return None
 
@@ -51,7 +51,7 @@ def update_supplier(db: Session, supplier_id: int, supplier: SupplierUpdate):
     for key, value in update_data.items():
         setattr(db_supplier, key, value)
 
-    db.commit()
-    db.refresh(db_supplier)
+    await db.commit()
+    await db.refresh(db_supplier)
     return db_supplier
 
