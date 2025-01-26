@@ -40,16 +40,23 @@ async def delete_product(db: AsyncSession, product_id: int):
 
 async def update_product(db: AsyncSession, product_id: int, product: ProductUpdate):
     """
-    Atualiza um produto existente.
+    Atualiza apenas os campos modificados de um produto.
     """
     db_product = await get_product(db, product_id)
     if db_product is None:
         return None
 
+    # Obtém apenas os campos que foram alterados
     update_data = product.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_product, key, value)
 
-    await db.commit()
-    await db.refresh(db_product)
+    # Atualiza apenas os campos que realmente foram modificados
+    for key, value in update_data.items():
+        current_value = getattr(db_product, key, None)
+        if current_value != value:  # Atualiza somente se o valor for diferente
+            setattr(db_product, key, value)
+
+    if update_data:  # Apenas realiza commit se houver alterações
+        await db.commit()
+        await db.refresh(db_product)
+
     return db_product

@@ -40,16 +40,23 @@ async def delete_sales(db: AsyncSession, sales_id: int):
 
 async def update_sales(db: AsyncSession, sales_id: int, sales: SalesUpdate):
     """
-    Atualiza uma venda existente.
+    Atualiza apenas os campos modificados de uma venda existente.
     """
     db_sales = await get_sales_by_id(db, sales_id)
     if db_sales is None:
         return None
 
+    # Obtém apenas os campos que foram alterados
     update_data = sales.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_sales, key, value)
 
-    await db.commit()
-    await db.refresh(db_sales)
+    # Atualiza somente os campos que realmente foram modificados
+    for key, value in update_data.items():
+        current_value = getattr(db_sales, key, None)
+        if current_value != value:  # Atualiza somente se o valor for diferente
+            setattr(db_sales, key, value)
+
+    if update_data:  # Realiza commit apenas se houver alterações
+        await db.commit()
+        await db.refresh(db_sales)
+
     return db_sales

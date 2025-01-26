@@ -39,16 +39,23 @@ async def delete_employee(db: AsyncSession, employee_id: int):
 
 async def update_employee(db: AsyncSession, employee_id: int, employee: EmployeeUpdate):
     """
-    Função que atualiza um funcionário
+    Atualiza apenas os campos modificados de um funcionário.
     """
     db_employee = await get_employee(db, employee_id=employee_id)
     if db_employee is None:
         return None
 
+    # Obtém apenas os campos que foram alterados
     update_data = employee.model_dump(exclude_unset=True)
+    
+    # Atualiza apenas os campos modificados
     for key, value in update_data.items():
-        setattr(db_employee, key, value)
+        current_value = getattr(db_employee, key, None)
+        if current_value != value:  # Atualiza somente se o valor for diferente
+            setattr(db_employee, key, value)
 
-    await db.commit()
-    await db.refresh(db_employee)
+    if update_data:  # Apenas realiza commit se houver alterações
+        await db.commit()
+        await db.refresh(db_employee)
+        
     return db_employee

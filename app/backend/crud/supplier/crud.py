@@ -41,17 +41,25 @@ async def delete_supplier(db: AsyncSession, supplier_id: int):
 
 async def update_supplier(db: AsyncSession, supplier_id: int, supplier: SupplierUpdate):
     """
-    Atualiza um fornecedor existente.
+    Atualiza apenas os campos modificados de um fornecedor existente.
     """
     db_supplier = await get_supplier(db, supplier_id)
     if db_supplier is None:
         return None
 
+    # Obtém apenas os campos que foram alterados
     update_data = supplier.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_supplier, key, value)
 
-    await db.commit()
-    await db.refresh(db_supplier)
+    # Atualiza somente os campos que realmente foram modificados
+    for key, value in update_data.items():
+        current_value = getattr(db_supplier, key, None)
+        if current_value != value:  # Atualiza somente se o valor for diferente
+            setattr(db_supplier, key, value)
+
+    if update_data:  # Realiza commit apenas se houver alterações
+        await db.commit()
+        await db.refresh(db_supplier)
+
     return db_supplier
+
 
