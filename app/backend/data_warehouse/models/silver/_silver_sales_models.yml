@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: silver_sales
+    description: "View silver de vendas com filtros de valor e data"
+    columns:
+      - name: id
+        description: "Identificador único da venda"
+        tests:
+          - not_null
+          - unique
+      - name: email_employee
+        description: "E‑mail do funcionário que realizou a venda"
+        tests:
+          - not_null
+          - unique
+      - name: email_customer
+        description: "E‑mail do cliente comprador"
+        tests:
+          - not_null
+          - unique
+      - name: first_name
+        description: "Primeiro nome do comprador"
+      - name: last_name
+        description: "Sobrenome do comprador"
+      - name: phone_number
+        description: "Telefone do comprador"
+      - name: price
+        description: "Valor da venda (arredondado, entre 0 e 8000)"
+        tests:
+          - not_null
+      - name: quantity
+        description: "Quantidade de itens vendidos"
+        tests:
+          - not_null
+      - name: name_product
+        description: "Nome ou identificador do produto vendido"
+        tests:
+          - not_null
+      - name: date
+        description: "Data e hora em que a venda ocorreu"
+      - name: created_at
+        description: "Timestamp de criação do registro no banco"
+      

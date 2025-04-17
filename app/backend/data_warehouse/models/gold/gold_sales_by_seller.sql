@@ -1,27 +1,28 @@
-{{ config(materialized='view') }}
+{{ config(schema='gold', materialized='table') }}
 
 WITH sales_seven_days_seller AS (
     SELECT 
-        email AS vendedor, 
-        DATE(data) AS data, 
-        SUM(valor) AS total_valor, 
-        SUM(quantidade) AS total_quantidade, 
-        COUNT(*) AS total_vendas
+        email_employee, 
+        DATE(date) AS date, 
+        SUM(sales_value) AS total_sales_value, 
+        SUM(quantity) AS total_quantity, 
+        COUNT(*) AS total_sales
     FROM 
         {{ ref('silver_sales') }}
     WHERE 
-        data >= CURRENT_DATE - INTERVAL '6 days'
+        date >= CURRENT_DATE - INTERVAL '6 days'
     GROUP BY 
-        email, DATE(data)
+        email_employee, DATE(date)
 )
 
 SELECT 
-    vendedor, 
-    data, 
-    total_valor, 
-    total_quantidade, 
-    total_vendas
+    email_employee, 
+    date, 
+    total_sales_value, 
+    total_quantity, 
+    total_sales
 FROM 
     sales_seven_days_seller
 ORDER BY 
-    data ASC, vendedor ASC
+    date ASC, email_employee ASC
+

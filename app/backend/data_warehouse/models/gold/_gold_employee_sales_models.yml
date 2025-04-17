@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: gold_employee_sales
+    description: "Desempenho de vendas por funcionário na última semana"
+    columns:
+      - name: employee_id
+        description: "ID do funcionário"
+        tests:
+          - not_null
+      - name: employee_name
+        description: "Nome completo do funcionário"
+        tests:
+          - not_null
+      - name: total_receita_7d
+        description: "Receita total gerada nos últimos 7 dias"
+        tests:
+          - not_null
+          - expression_is_true: { expression: "total_receita_7d >= 0" }
+      - name: total_qtd_7d
+        description: "Quantidade total vendida nos últimos 7 dias"
+        tests:
+          - not_null
+      - name: total_transacoes_7d
+        description: "Número de transações concluídas nos últimos 7 dias"
+        tests:
+          - not_null

@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: silver_suppliers
+    description: "View silver de fornecedores ativos"
+    columns:
+      - name: supplier_id
+        description: "ID único do fornecedor"
+        tests:
+          - not_null
+          - unique
+      - name: company_name
+        description: "Nome da empresa fornecedora"
+        tests:
+          - not_null
+      - name: contact_name
+        description: "Nome do contato principal"
+      - name: email
+        description: "E‑mail do fornecedor"
+        tests:
+          - not_null
+      - name: phone_number
+        description: "Telefone do fornecedor"
+      - name: website
+        description: "Website da empresa"
+      - name: address
+        description: "Endereço completo"
+      - name: product_categories
+        description: "Categorias de produtos/serviços fornecidos"
+      - name: primary_product
+        description: "Produto/serviço principal"
+      - name: created_at
+        description: "Timestamp de criação do registro"

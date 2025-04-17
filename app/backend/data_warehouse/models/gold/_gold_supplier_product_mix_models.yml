@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: gold_supplier_product_mix
+    description: "Número de produtos fornecidos por cada supplier"
+    columns:
+      - name: supplier_id
+        description: "ID do fornecedor"
+        tests:
+          - not_null
+      - name: company_name
+        description: "Nome da empresa fornecedora"
+        tests:
+          - not_null
+      - name: total_produtos_fornecidos
+        description: "Quantidade de produtos que o fornecedor oferece"
+        tests:
+          - not_null
+          - expression_is_true: { expression: "total_produtos_fornecidos >= 0" }

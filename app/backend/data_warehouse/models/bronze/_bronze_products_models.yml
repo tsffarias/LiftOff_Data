@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: bronze_products
+    description: "Tabela bronze de products"
+    columns:
+      - name: id
+        description: "Identificador único do produto"
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: "Nome do produto"
+      - name: description
+        description: "Descrição do produto"
+      - name: price
+        description: "Preço do produto"
+      - name: categoria
+        description: "Categoria do produto"
+      - name: email_fornecedor
+        description: "E‑mail do fornecedor do produto"
+        tests:
+          - not_null
+          - unique
+      - name: created_at
+        description: "Timestamp de criação do registro do produto"

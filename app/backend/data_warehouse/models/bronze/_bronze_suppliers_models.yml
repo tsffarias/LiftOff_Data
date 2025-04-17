@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: bronze_suppliers
+    description: "Tabela bronze de suppliers"
+    columns:
+      - name: supplier_id
+        description: "Identificador único do fornecedor"
+        tests:
+          - not_null
+          - unique
+      - name: company_name
+        description: "Nome da empresa fornecedora"
+      - name: contact_name
+        description: "Nome do contato principal"
+      - name: email
+        description: "Endereço de e‑mail do fornecedor"
+        tests:
+          - not_null
+          - unique
+      - name: phone_number
+        description: "Número de telefone do fornecedor"
+      - name: website
+        description: "Website da empresa fornecedora"
+      - name: address
+        description: "Endereço completo do fornecedor"
+      - name: product_categories
+        description: "Categorias de produtos ou serviços fornecidos"
+      - name: primary_product
+        description: "Produto ou serviço principal"
+      - name: created_at
+        description: "Timestamp de criação do registro do fornecedor"

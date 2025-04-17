@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: silver_products
+    description: "View silver de produtos válidos"
+    columns:
+      - name: id
+        description: "ID único do produto"
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: "Nome do produto"
+        tests:
+          - not_null
+      - name: description
+        description: "Descrição do produto"
+      - name: price
+        description: "Preço do produto (arredondado)"
+        tests:
+          - not_null
+      - name: categoria
+        description: "Categoria do produto"
+      - name: email_fornecedor
+        description: "E‑mail do fornecedor"
+      - name: created_at
+        description: "Timestamp de criação do registro"

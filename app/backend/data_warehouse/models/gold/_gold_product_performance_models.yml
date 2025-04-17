@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: gold_product_performance
+    description: "Receita e quantidade por produto nos últimos 30 dias"
+    columns:
+      - name: produto
+        description: "Produto vendido"
+        tests:
+          - not_null
+      - name: total_receita_30d
+        description: "Receita total nos últimos 30 dias"
+        tests:
+          - not_null
+          - expression_is_true: { expression: "total_receita_30d >= 0" }
+      - name: total_qtd_30d
+        description: "Quantidade total vendida nos últimos 30 dias"
+        tests:
+          - not_null
+      - name: avg_valor_30d
+        description: "Valor médio por venda nos últimos 30 dias"
+        tests:
+          - not_null

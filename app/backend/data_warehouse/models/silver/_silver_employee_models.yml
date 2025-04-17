@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: silver_employees
+    description: "View silver de funcionários ativos"
+    columns:
+      - name: employee_id
+        description: "ID único do funcionário"
+        tests:
+          - not_null
+          - unique
+      - name: manager_id
+        description: "ID do gerente do funcionário"
+      - name: first_name
+        description: "Primeiro nome do funcionário"
+        tests:
+          - not_null
+      - name: last_name
+        description: "Sobrenome do funcionário"
+        tests:
+          - not_null
+      - name: email
+        description: "E‑mail do funcionário"
+        tests:
+          - not_null
+      - name: phone_number
+        description: "Telefone do funcionário"
+      - name: hire_date
+        description: "Data de contratação"
+        tests:
+          - not_null
+      - name: department_id
+        description: "ID do departamento"
+      - name: job_title
+        description: "Cargo do funcionário"
+      - name: location
+        description: "Localização (cidade, estado, país)"
+      - name: birth_date
+        description: "Data de nascimento"
+      - name: gender
+        description: "Gênero do funcionário"
+      - name: nationality
+        description: "Nacionalidade"
+      - name: start_date
+        description: "Data de início no cargo atual"
+      - name: salary
+        description: "Salário do funcionário (arredondado)"
+        tests:
+          - not_null
+      - name: termination_date
+        description: "Data de término do contrato (se aplicável)"
+      - name: created_at
+        description: "Timestamp de criação do registro"

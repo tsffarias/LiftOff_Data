@@ -1,0 +1,47 @@
+# _bronze_employees_models.yml
+version: 2
+
+models:
+  - name: bronze_employees
+    description: "Tabela bronze de employees"
+    columns:
+      - name: employee_id
+        description: "Identificador único do funcionário"
+        tests:
+          - not_null
+          - unique
+      - name: manager_id
+        description: "Identificador do gerente (se aplicável)"
+      - name: first_name
+        description: "Primeiro nome do funcionário"
+      - name: last_name
+        description: "Sobrenome do funcionário"
+      - name: email
+        description: "E‑mail do funcionário"
+        tests:
+          - not_null
+          - unique
+      - name: phone_number
+        description: "Telefone do funcionário"
+      - name: hire_date
+        description: "Data de contratação"
+      - name: department_id
+        description: "Identificador do departamento"
+      - name: job_title
+        description: "Cargo do funcionário"
+      - name: location
+        description: "Localização (cidade, estado, país)"
+      - name: birth_date
+        description: "Data de nascimento"
+      - name: gender
+        description: "Gênero do funcionário"
+      - name: nationality
+        description: "Nacionalidade"
+      - name: start_date
+        description: "Data de início no cargo atual"
+      - name: salary
+        description: "Salário do funcionário"
+      - name: termination_date
+        description: "Data de término do contrato (se aplicável)"
+      - name: created_at
+        description: "Timestamp de criação do registro no banco"

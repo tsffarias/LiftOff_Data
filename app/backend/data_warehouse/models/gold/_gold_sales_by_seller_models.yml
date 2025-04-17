@@ -1,20 +1,6 @@
 version: 2
 
 models:
-  - name: gold_sales_7_days
-    description: "Tabela Gold que agrega as vendas por produto nos últimos 7 dias, exibindo o total de vendas e a quantidade de produtos vendidos."
-    columns:
-      - name: data
-        description: "Data da venda agregada."
-      - name: produto
-        description: "Nome do produto vendido."
-      - name: total_valor
-        description: "Valor total das vendas do produto na data especificada."
-      - name: total_quantidade
-        description: "Quantidade total de produtos vendidos na data especificada."
-      - name: total_vendas
-        description: "Número total de transações de vendas do produto na data especificada."
-
   - name: gold_sales_by_seller
     description: "Tabela Gold que agrega as vendas por vendedor nos últimos 7 dias, exibindo o desempenho de cada vendedor em termos de valor, quantidade e número de vendas."
     columns:

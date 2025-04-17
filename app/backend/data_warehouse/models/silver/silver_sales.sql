@@ -2,17 +2,25 @@
 
 WITH silver_sales AS (
     SELECT 
-        email, 
-        DATE(data) AS data,
-        round(cast(valor as decimal(10, 2)), 2) as valor, 
-        quantidade, 
-        produto
+        DATE(date) AS date,
+        id,
+        email_employee,
+        email_customer,
+        first_name,
+        last_name,
+        phone_number,
+        name_product,
+        quantity,
+        round(cast(price as decimal(10, 2)), 2) as sales_value,
+        created_at
     FROM 
         {{ ref('bronze_sales') }}
     WHERE 
-        valor > 0 
-        AND valor < 8000
-        AND data <= CURRENT_DATE
+        price > 0 
+        AND price < 8000
+        AND date <= CURRENT_DATE
 )
 
 SELECT * FROM silver_sales
+
+        

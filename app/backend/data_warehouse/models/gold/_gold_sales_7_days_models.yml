@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: gold_sales_7_days
+    description: "Tabela Gold que agrega as vendas por produto nos últimos 7 dias, exibindo o total de vendas e a quantidade de produtos vendidos."
+    columns:
+      - name: date
+        description: "Data da venda agregada."
+        tests:
+          - not_null
+      - name: name_product
+        description: "Nome do produto vendido."
+        tests:
+          - unique: { column_names: ['data','produto'] }
+      - name: total_sales_value
+        description: "Valor total das vendas do produto na data especificada."
+        tests:
+          - not_null
+      - name: total_quantity
+        description: "Quantidade total de produtos vendidos na data especificada."
+        tests:
+          - not_null
+      - name: total_sales
+        description: "Número total de transações de vendas do produto na data especificada."
+        tests:
+          - not_null

@@ -1,2 +1,3 @@
 agate
 dbt-core
+dbt-postgres
